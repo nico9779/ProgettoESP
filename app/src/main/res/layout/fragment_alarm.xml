@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".AlarmFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Alarm Fragment"
+        android:text="@string/starting_string_alarm"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        android:padding="24dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
 </FrameLayout>

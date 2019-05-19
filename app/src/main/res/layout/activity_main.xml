@@ -22,6 +22,17 @@
         android:layout_above="@id/bottom_navigation_bar"
         android:id="@+id/frame" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fab"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add_fab"
+        android:layout_above="@id/bottom_navigation_bar"
+        android:layout_alignParentEnd="true"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:fabSize="normal"/>
+
 
 
 </RelativeLayout>
