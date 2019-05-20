@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Definisco gli oggeti che compaiono all'interno del menù -->
     <item
         android:id="@+id/alarm"
         android:icon="@drawable/ic_alarm_black_24dp"
-        android:title="Sveglie" />
+        android:title="@string/menu_alarm" />
     <item
         android:id="@+id/note"
         android:icon="@drawable/ic_event_note_black_24dp"
-        android:title="Note" />
+        android:title="@string/menu_note" />
 </menu>

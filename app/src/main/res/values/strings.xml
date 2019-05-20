@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">ProgettoESP</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="starting_string_alarm">Premi il bottone in basso per iniziare a creare la tua prima sveglia!</string>
     <string name="starting_string_note">Premi il bottone in basso per iniziare a creare la tua prima nota!</string>
+    <string name="menu_alarm">Sveglie</string>
+    <string name="menu_note">Note</string>
 </resources>

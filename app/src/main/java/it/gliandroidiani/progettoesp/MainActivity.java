@@ -10,15 +10,20 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
+    private BottomNavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BottomNavigationView navigationView = findViewById(R.id.bottom_navigation_bar);
+        navigationView = findViewById(R.id.bottom_navigation_bar);
+
+        //Istanzio i fragment
         final AlarmFragment alarmFragment = new AlarmFragment();
         final NoteFragment noteFragment = new NoteFragment();
 
+        //Listener per impostare i fragment in base alla selezione nel menu
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -30,17 +35,22 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.note:
                         setFragment(noteFragment);
                         return true;
+                    default:
+                        return false;
                 }
-                return false;
             }
         });
 
+        //Seleziono le sveglie come primo oggetto da mostrare nella UI
         navigationView.setSelectedItemId(R.id.alarm);
     }
 
+    //Metodo per rimpiazzare un fragment in activity_main.xml
     private void setFragment(Fragment fragment){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frame, fragment);
-        fragmentTransaction.commit();
+        if(fragment!=null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frame, fragment);
+            fragmentTransaction.commit();
+        }
     }
 }
