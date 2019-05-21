@@ -1,5 +1,6 @@
 package it.gliandroidiani.progettoesp;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -7,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,11 +48,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Metodo per rimpiazzare un fragment in activity_main.xml
-    private void setFragment(Fragment fragment){
-        if(fragment!=null) {
+    private void setFragment(Fragment fragment)
+    {
+        if(fragment!=null)
+        {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.frame, fragment);
             fragmentTransaction.commit();
+        }
+    }
+
+    public void addElement(View view) {
+        int selected = navigationView.getSelectedItemId();
+        Intent intent;
+        if(selected==R.id.alarm)
+        {
+            intent = new Intent(this, ActivityAddAlarm.class);
+            startActivity(intent);
+        }
+        else if(selected==R.id.note){
+            intent = new Intent(this, ActivityAddNote.class);
+            startActivity(intent);
         }
     }
 }

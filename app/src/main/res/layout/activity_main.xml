@@ -31,6 +31,7 @@
         android:src="@drawable/ic_add_fab"
         android:layout_above="@id/bottom_navigation_bar"
         android:layout_alignParentEnd="true"
+        android:onClick="addElement"
         app:backgroundTint="@color/colorPrimaryDark"
         app:fabSize="normal"/>
 
