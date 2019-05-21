@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Metodo per chiamare l'activity corretta per aggiungere una sveglia o una nota
     public void addElement(View view) {
         int selected = navigationView.getSelectedItemId();
         Intent intent;
