@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context=".ActivityAddAlarm">
 
     <android.support.v7.widget.Toolbar
@@ -18,11 +19,61 @@
         app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/title_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Activity per aggiungere sveglie"
-         />
+        android:layout_below="@id/alarm_toolbar">
+
+        <TextView
+            android:id="@+id/title_label"
+            android:layout_width="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_height="wrap_content"
+            android:textSize="50sp"
+            android:textColor="@color/nero"
+            android:text="@string/alarm_title_label"/>
+
+        <EditText
+            android:id="@+id/alarm_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/title_label"
+            android:layout_toEndOf="@id/title_label"
+            android:hint="@string/enter_alarm_title_hint"
+            android:inputType="textCapSentences"
+            android:textSize="25sp"
+            tools:ignore="Autofill" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/time_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_layout">
+
+        <TextView
+            android:id="@+id/time_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="50sp"
+            android:layout_margin="10dp"
+            android:textColor="@color/nero"
+            android:text="@string/alarm_time_label" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/time_label"
+            android:onClick="setTime"
+            android:textSize="50sp"
+            android:textColor="@color/nero"
+            android:layout_toEndOf="@id/time_label"/>
+
+    </RelativeLayout>
+
+
 
 </RelativeLayout>

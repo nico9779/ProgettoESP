@@ -6,5 +6,8 @@
     <string name="menu_alarm">Sveglie</string>
     <string name="menu_note">Note</string>
     <string name="event_save_alarm">Salva allarme</string>
-    <string name="event_cancel_alarm">Elimina allarme</string>
+    <string name="event_cancel_alarm">Sveglia annullata</string>
+    <string name="enter_alarm_title_hint">Inserisci un titolo</string>
+    <string name="alarm_title_label">Titolo</string>
+    <string name="alarm_time_label">Ora</string>
 </resources>

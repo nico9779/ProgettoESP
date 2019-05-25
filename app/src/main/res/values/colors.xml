@@ -5,4 +5,5 @@
     <color name="colorAccent">#D81B60</color>
     <color name="bianco">#FFFFFF</color>
     <color name="grigio">#AAAAAA</color>
+    <color name="nero">#000000</color>
 </resources>
