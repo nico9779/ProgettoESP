@@ -38,6 +38,7 @@
             android:id="@+id/alarm_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_alignBaseline="@id/title_label"
             android:layout_toEndOf="@id/title_label"
             android:hint="@string/enter_alarm_title_hint"
@@ -71,6 +72,44 @@
             android:textSize="50sp"
             android:textColor="@color/nero"
             android:layout_toEndOf="@id/time_label"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/vibration_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/time_layout">
+
+        <TextView
+            android:id="@+id/vibration_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_margin="10dp"
+            android:textColor="@color/nero"
+            android:text="@string/vibrator_label" />
+
+        <TextView
+            android:id="@+id/vibration_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/nero"
+            android:text="@string/vibration_off"
+            android:textSize="30sp"
+            android:layout_alignBaseline="@id/vibration_label"
+            android:layout_toEndOf="@id/vibration_label"
+            android:layout_toStartOf="@id/vibration_switch"/>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/vibration_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:theme="@style/ColorSwitch"
+            />
 
     </RelativeLayout>
 

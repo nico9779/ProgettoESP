@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Tema dello Switch -->
+    <style name="ColorSwitch" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="colorSwitchThumbNormal">@color/disable_thumb_grey</item>
+        <item name="android:colorForeground">@color/disable_foreground_grey</item>
+    </style>
+
 </resources>

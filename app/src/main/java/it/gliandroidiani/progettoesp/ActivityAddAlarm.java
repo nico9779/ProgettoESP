@@ -4,10 +4,12 @@ import android.app.TimePickerDialog;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -18,6 +20,8 @@ public class ActivityAddAlarm extends AppCompatActivity implements TimePickerDia
 
     Toolbar alarmToolbar;
     TextView time;
+    TextView vibration_state;
+    SwitchCompat vibration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -25,16 +29,30 @@ public class ActivityAddAlarm extends AppCompatActivity implements TimePickerDia
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_alarm);
 
+        time = findViewById(R.id.time);
+        vibration = findViewById(R.id.vibration_switch);
+        vibration_state = findViewById(R.id.vibration_state);
+
         alarmToolbar = findViewById(R.id.alarm_toolbar);
         setSupportActionBar(alarmToolbar);
 
-        time = findViewById(R.id.time);
 
         final Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
         time.setText(hour+":"+minute);
+
+        //Metodo che viene invocato quando cambio lo stato dello switch
+        vibration.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                    vibration_state.setText(R.string.vibration_on);
+                else
+                    vibration_state.setText(R.string.vibration_off);
+            }
+        });
     }
 
     //Metodo che aggiunge il menu alla toolbar
