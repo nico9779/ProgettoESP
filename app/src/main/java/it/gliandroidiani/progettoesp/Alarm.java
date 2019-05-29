@@ -4,10 +4,17 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity
+@Entity(tableName = "alarm_table")
 public class Alarm {
 
-    @PrimaryKey
+    public Alarm(String title, int hours, int minute, boolean vibration) {
+        this.title = title;
+        this.hours = hours;
+        this.minute = minute;
+        this.vibration = vibration;
+    }
+
+    @PrimaryKey(autoGenerate = true)
     private int id;
 
     @ColumnInfo(name = "title")

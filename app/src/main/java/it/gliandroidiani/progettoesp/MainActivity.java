@@ -2,6 +2,7 @@ package it.gliandroidiani.progettoesp;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -9,9 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int ADD_ALARM_REQUEST = 1;
     private BottomNavigationView navigationView;
 
     @Override
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         if(selected==R.id.alarm)
         {
             intent = new Intent(this, ActivityAddAlarm.class);
-            startActivity(intent);
+            startActivityForResult(intent, ADD_ALARM_REQUEST);
         }
         else if(selected==R.id.note){
             intent = new Intent(this, ActivityAddNote.class);
