@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ActivityAddNote"></activity>
-        <activity android:name=".ActivityAddAlarm"
+        <activity android:name=".ActivityAddEditAlarm"
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".MainActivity"
             android:launchMode="singleTop">

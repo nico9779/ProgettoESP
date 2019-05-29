@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".ActivityAddAlarm">
+    tools:context=".ActivityAddEditAlarm">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/alarm_toolbar"
+        android:id="@+id/add_alarm_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
@@ -16,14 +16,14 @@
         app:titleTextColor="@color/bianco"
         android:background="@color/colorPrimary"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:theme="@style/AppTheme"
         />
 
     <RelativeLayout
         android:id="@+id/title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/alarm_toolbar">
+        android:layout_below="@id/add_alarm_toolbar">
 
         <TextView
             android:id="@+id/title_label"

@@ -19,7 +19,13 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
-public class ActivityAddAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
+public class ActivityAddEditAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
+
+    public static final String EXTRA_ID = "it.gliandroidiani.progettoesp.EXTRA_ID";
+    public static final String EXTRA_TITLE = "it.gliandroidiani.progettoesp.EXTRA_TITLE";
+    public static final String EXTRA_HOURS = "it.gliandroidiani.progettoesp.EXTRA_HOURS";
+    public static final String EXTRA_MINUTE = "it.gliandroidiani.progettoesp.EXTRA_MINUTE";
+    public static final String EXTRA_VIBRATION = "it.gliandroidiani.progettoesp.EXTRA_VIBRATION";
 
     private AlarmViewModel alarmViewModel;
     Toolbar alarmToolbar;
@@ -40,7 +46,7 @@ public class ActivityAddAlarm extends AppCompatActivity implements TimePickerDia
         alarmTitle = findViewById(R.id.alarm_title);
         alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
 
-        alarmToolbar = findViewById(R.id.alarm_toolbar);
+        alarmToolbar = findViewById(R.id.add_alarm_toolbar);
         setSupportActionBar(alarmToolbar);
 
 
@@ -60,15 +66,28 @@ public class ActivityAddAlarm extends AppCompatActivity implements TimePickerDia
                     vibration_state.setText(R.string.vibration_off);
             }
         });
+
+        Intent intent = getIntent();
+        if(intent.hasExtra(EXTRA_ID)){
+            alarmToolbar.setTitle("Modifica sveglia");
+            alarmTitle.setText(intent.getStringExtra(EXTRA_TITLE));
+            time.setText(intent.getIntExtra(EXTRA_HOURS, 0)+":"+intent.getIntExtra(EXTRA_MINUTE, 0));
+            vibration_switch.setChecked(intent.getBooleanExtra(EXTRA_VIBRATION, false));
+        }
     }
 
     private void saveAlarm(){
         String title = alarmTitle.getText().toString();
         String textTime = time.getText().toString();
-        int i = 0;
-        for (; textTime.charAt(i) != ':' ; i++);
-        int hours = Integer.valueOf(textTime.substring(0,i));
-        int minute = Integer.valueOf(textTime.substring(i+1));
+        int hours = 0;
+        int minute = 0;
+        for (int i = 0; i < textTime.length(); i++) {
+            if(textTime.charAt(i) == ':'){
+                hours = Integer.valueOf(textTime.substring(0,i));
+                minute = Integer.valueOf(textTime.substring(i+1));
+                break;
+            }
+        }
         boolean vibration = vibration_switch.isChecked();
 
         if(title.trim().isEmpty()) {
@@ -76,10 +95,24 @@ public class ActivityAddAlarm extends AppCompatActivity implements TimePickerDia
             return;
         }
 
-        Intent intent = new Intent();
-        Alarm alarm = new Alarm(title, hours, minute, vibration);
-        alarmViewModel.addAlarm(alarm);
+        if(!getIntent().hasExtra(EXTRA_ID)){
+            Alarm alarm = new Alarm(title, hours, minute, vibration);
+            alarmViewModel.addAlarm(alarm);
+            Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
+        }
+        else {
+            int id = getIntent().getIntExtra(EXTRA_ID, -1);
+            if (id == -1)
+                Toast.makeText(this, "La sveglia non può essere modificata", Toast.LENGTH_SHORT).show();
+            else {
+                Alarm alarm = new Alarm(title, hours, minute, vibration);
+                alarm.setId(id);
+                alarmViewModel.updateAlarm(alarm);
+                Toast.makeText(this, "Sveglia modificata", Toast.LENGTH_SHORT).show();
+            }
+        }
 
+        Intent intent = new Intent();
         setResult(RESULT_OK, intent);
         finish();
     }

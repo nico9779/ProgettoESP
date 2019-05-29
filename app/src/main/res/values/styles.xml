@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionOverflowButtonStyle">@style/OverflowMenuStyle</item>
     </style>
 
     <!-- Tema dello Switch -->
@@ -13,6 +14,11 @@
         <item name="colorControlActivated">@color/colorPrimary</item>
         <item name="colorSwitchThumbNormal">@color/disable_thumb_grey</item>
         <item name="android:colorForeground">@color/disable_foreground_grey</item>
+    </style>
+
+    <!-- Stile del menu della toolbar -->
+    <style name="OverflowMenuStyle" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/bianco</item>
     </style>
 
 </resources>

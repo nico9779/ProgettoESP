@@ -13,6 +13,7 @@ import java.util.List;
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
 
     private List<Alarm> alarms = new ArrayList<>();
+    private OnItemClickListener listener;
 
     @NonNull
     @Override
@@ -40,6 +41,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    public Alarm getAlarmAt(int position){
+        return alarms.get(position);
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView title;
@@ -53,6 +58,23 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             hour = itemView.findViewById(R.id.alarm_hour_item);
             minute = itemView.findViewById(R.id.alarm_minute_item);
             vibration = itemView.findViewById(R.id.alarm_vibration_item);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if(listener != null && position != RecyclerView.NO_POSITION)
+                        listener.onItemClick(alarms.get(position));
+                }
+            });
         }
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(Alarm alarm);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener = listener;
     }
 }
