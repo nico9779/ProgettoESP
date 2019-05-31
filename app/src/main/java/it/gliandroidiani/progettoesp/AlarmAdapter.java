@@ -28,7 +28,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         viewHolder.title.setText(currentAlarm.getTitle());
         viewHolder.hour.setText(String.valueOf(currentAlarm.getHours()));
         viewHolder.minute.setText(String.valueOf(currentAlarm.getMinute()));
-        viewHolder.vibration.setText(String.valueOf(currentAlarm.isVibration()));
+        if(currentAlarm.isVibration())
+            viewHolder.vibration.setText(R.string.vibration_on);
+        else
+            viewHolder.vibration.setText(R.string.vibration_off);
     }
 
     @Override

@@ -1,19 +1,27 @@
 package it.gliandroidiani.progettoesp;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.provider.AlarmClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int ADD_ALARM_REQUEST = 1;
+    public static final String LOG_MAIN_ACTIVITY = "MainActivity";
+
     private BottomNavigationView navigationView;
+    private AlarmViewModel alarmViewModel;
+    private boolean isConfigurationChanged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         navigationView = findViewById(R.id.bottom_navigation_bar);
+        alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
+        isConfigurationChanged = false;
 
         //Istanzio i fragment
         final AlarmFragment alarmFragment = new AlarmFragment();
@@ -44,8 +54,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Seleziono le sveglie come primo oggetto da mostrare nella UI
-        navigationView.setSelectedItemId(R.id.alarm);
+        if(savedInstanceState != null) {
+            isConfigurationChanged = true;
+            int item_selected = savedInstanceState.getInt("item_selected");
+            navigationView.setSelectedItemId(item_selected);
+        }
+        else {
+            //Seleziono le sveglie come primo oggetto da mostrare nella UI
+            navigationView.setSelectedItemId(R.id.alarm);
+        }
+
+        addAlarmAssistant();
     }
 
     //Metodo per rimpiazzare un fragment in activity_main.xml
@@ -72,5 +91,34 @@ public class MainActivity extends AppCompatActivity {
             intent = new Intent(this, ActivityAddNote.class);
             startActivity(intent);
         }
+    }
+
+    //Metodo per gestire l'interazione con assistant
+    private void addAlarmAssistant(){
+        Intent intent = getIntent();
+        Log.d(LOG_MAIN_ACTIVITY, String.valueOf(intent.getAction()));
+        if(!isConfigurationChanged) {
+            // verifico se l'intent che ricevo è triggerato dall'assistent per impostare una sveglia
+            if (AlarmClock.ACTION_SET_ALARM.equals(intent.getAction())) {
+                // verifico se ci sono gli extra che mi servono per impostare la sveglia
+                if (intent.hasExtra(AlarmClock.EXTRA_HOUR) && intent.hasExtra(AlarmClock.EXTRA_MINUTES)) {
+                    int hours = intent.getIntExtra(AlarmClock.EXTRA_HOUR, -1);
+                    int minute = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, -1);
+                    Alarm alarm = new Alarm("Sveglia", hours, minute, false);
+                    alarmViewModel.addAlarm(alarm);
+                    Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
+                }
+            }
+            // verifico se l'intent che ricevo è triggerato dall'assistent per vedere tutte le mie sveglie
+            else if (AlarmClock.ACTION_SHOW_ALARMS.equals(intent.getAction()))
+                Log.d(LOG_MAIN_ACTIVITY, intent.getAction());
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        int item_selected = navigationView.getSelectedItemId();
+        outState.putInt("item_selected", item_selected);
+        super.onSaveInstanceState(outState);
     }
 }

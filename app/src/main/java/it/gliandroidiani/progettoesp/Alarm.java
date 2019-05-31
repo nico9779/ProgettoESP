@@ -15,6 +15,7 @@ public class Alarm {
     }
 
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     private int id;
 
     @ColumnInfo(name = "title")

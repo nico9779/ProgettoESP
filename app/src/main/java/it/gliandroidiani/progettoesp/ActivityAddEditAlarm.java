@@ -21,12 +21,6 @@ import java.util.Calendar;
 
 public class ActivityAddEditAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
-    public static final String EXTRA_ID = "it.gliandroidiani.progettoesp.EXTRA_ID";
-    public static final String EXTRA_TITLE = "it.gliandroidiani.progettoesp.EXTRA_TITLE";
-    public static final String EXTRA_HOURS = "it.gliandroidiani.progettoesp.EXTRA_HOURS";
-    public static final String EXTRA_MINUTE = "it.gliandroidiani.progettoesp.EXTRA_MINUTE";
-    public static final String EXTRA_VIBRATION = "it.gliandroidiani.progettoesp.EXTRA_VIBRATION";
-
     private AlarmViewModel alarmViewModel;
     Toolbar alarmToolbar;
     TextView time;
@@ -68,11 +62,11 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         });
 
         Intent intent = getIntent();
-        if(intent.hasExtra(EXTRA_ID)){
+        if(intent.hasExtra(AlarmFragment.EXTRA_ID)){
             alarmToolbar.setTitle("Modifica sveglia");
-            alarmTitle.setText(intent.getStringExtra(EXTRA_TITLE));
-            time.setText(intent.getIntExtra(EXTRA_HOURS, 0)+":"+intent.getIntExtra(EXTRA_MINUTE, 0));
-            vibration_switch.setChecked(intent.getBooleanExtra(EXTRA_VIBRATION, false));
+            alarmTitle.setText(intent.getStringExtra(AlarmFragment.EXTRA_TITLE));
+            time.setText(intent.getIntExtra(AlarmFragment.EXTRA_HOURS, 0)+":"+intent.getIntExtra(AlarmFragment.EXTRA_MINUTE, 0));
+            vibration_switch.setChecked(intent.getBooleanExtra(AlarmFragment.EXTRA_VIBRATION, false));
         }
     }
 
@@ -95,13 +89,13 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             return;
         }
 
-        if(!getIntent().hasExtra(EXTRA_ID)){
+        if(!getIntent().hasExtra(AlarmFragment.EXTRA_ID)){
             Alarm alarm = new Alarm(title, hours, minute, vibration);
             alarmViewModel.addAlarm(alarm);
             Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
         }
         else {
-            int id = getIntent().getIntExtra(EXTRA_ID, -1);
+            int id = getIntent().getIntExtra(AlarmFragment.EXTRA_ID, -1);
             if (id == -1)
                 Toast.makeText(this, "La sveglia non può essere modificata", Toast.LENGTH_SHORT).show();
             else {

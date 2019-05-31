@@ -32,6 +32,12 @@ import java.util.List;
 public class AlarmFragment extends Fragment {
 
     public static final int EDIT_ALARM_REQUEST = 2;
+    public static final String EXTRA_ID = "it.gliandroidiani.progettoesp.EXTRA_ID";
+    public static final String EXTRA_TITLE = "it.gliandroidiani.progettoesp.EXTRA_TITLE";
+    public static final String EXTRA_HOURS = "it.gliandroidiani.progettoesp.EXTRA_HOURS";
+    public static final String EXTRA_MINUTE = "it.gliandroidiani.progettoesp.EXTRA_MINUTE";
+    public static final String EXTRA_VIBRATION = "it.gliandroidiani.progettoesp.EXTRA_VIBRATION";
+
     private AlarmViewModel alarmViewModel;
     TextView noAlarmTextView;
     Toolbar alarmToolbar;
@@ -86,11 +92,11 @@ public class AlarmFragment extends Fragment {
             @Override
             public void onItemClick(Alarm alarm) {
                 Intent intent = new Intent(getActivity(), ActivityAddEditAlarm.class);
-                intent.putExtra(ActivityAddEditAlarm.EXTRA_ID, alarm.getId());
-                intent.putExtra(ActivityAddEditAlarm.EXTRA_TITLE, alarm.getTitle());
-                intent.putExtra(ActivityAddEditAlarm.EXTRA_HOURS, alarm.getHours());
-                intent.putExtra(ActivityAddEditAlarm.EXTRA_MINUTE, alarm.getMinute());
-                intent.putExtra(ActivityAddEditAlarm.EXTRA_VIBRATION, alarm.isVibration());
+                intent.putExtra(EXTRA_ID, alarm.getId());
+                intent.putExtra(EXTRA_TITLE, alarm.getTitle());
+                intent.putExtra(EXTRA_HOURS, alarm.getHours());
+                intent.putExtra(EXTRA_MINUTE, alarm.getMinute());
+                intent.putExtra(EXTRA_VIBRATION, alarm.isVibration());
                 startActivityForResult(intent, EDIT_ALARM_REQUEST);
             }
         });

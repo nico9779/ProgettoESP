@@ -24,8 +24,8 @@ public class AlarmRepository {
         new DeleteAllAlarmsAsyncTask(alarmDao).execute();
     }
 
-    public void addAlarm(Alarm alarm){
-        new AddAlarmAsyncTask(alarmDao).execute(alarm);
+    public void addAlarm(Alarm alarm) {
+            new AddAlarmAsyncTask(alarmDao).execute(alarm);
     }
 
     public void updateAlarm(Alarm alarm){

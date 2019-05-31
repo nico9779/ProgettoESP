@@ -19,7 +19,7 @@
         android:id="@+id/bottom_navigation_bar"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation_menu"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorPrimary"
         app:itemIconTint="@color/bottom_navigation_colors"
         app:itemTextColor="@color/bottom_navigation_colors"/>
 
@@ -32,7 +32,7 @@
         android:layout_above="@id/bottom_navigation_bar"
         android:layout_alignParentEnd="true"
         android:onClick="addElement"
-        app:backgroundTint="@color/colorPrimaryDark"
+        app:backgroundTint="@color/colorPrimary"
         app:fabSize="normal"/>
 
 
