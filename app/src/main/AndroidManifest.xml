@@ -3,6 +3,7 @@
     package="it.gliandroidiani.progettoesp">
 
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -34,6 +35,9 @@
                 <category android:name="android.intent.category.VOICE" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".AlertReceiver"/>
+
     </application>
 
 </manifest>

@@ -15,28 +15,43 @@
             android:id="@+id/alarm_title_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/nero"
             android:text="Prova"/>
 
         <TextView
-            android:id="@+id/alarm_hour_item"
+            android:id="@+id/alarm_time_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/alarm_title_item"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/nero"
             android:text="10"/>
 
-        <TextView
-            android:id="@+id/alarm_minute_item"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/alarm_hour_item"
-            android:text="20"/>
 
-        <TextView
-            android:id="@+id/alarm_vibration_item"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/alarm_minute_item"
-            android:text="On"/>
+            android:layout_below="@id/alarm_time_item">
+
+            <TextView
+                android:id="@+id/vibration_label_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vibrator_label"
+                android:textColor="@color/nero"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+            <TextView
+                android:id="@+id/alarm_vibration_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/vibration_label_item"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/nero"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:text="On"/>
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
@@ -26,8 +28,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull AlarmAdapter.ViewHolder viewHolder, int i) {
         Alarm currentAlarm = alarms.get(i);
         viewHolder.title.setText(currentAlarm.getTitle());
-        viewHolder.hour.setText(String.valueOf(currentAlarm.getHours()));
-        viewHolder.minute.setText(String.valueOf(currentAlarm.getMinute()));
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, currentAlarm.getHours());
+        c.set(Calendar.MINUTE, currentAlarm.getMinute());
+        c.set(Calendar.SECOND, 0);
+        viewHolder.time.setText(DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime()));
         if(currentAlarm.isVibration())
             viewHolder.vibration.setText(R.string.vibration_on);
         else
@@ -51,15 +56,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView title;
-        private TextView hour;
-        private TextView minute;
+        private TextView time;
         private TextView vibration;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.alarm_title_item);
-            hour = itemView.findViewById(R.id.alarm_hour_item);
-            minute = itemView.findViewById(R.id.alarm_minute_item);
+            time = itemView.findViewById(R.id.alarm_time_item);
             vibration = itemView.findViewById(R.id.alarm_vibration_item);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -80,4 +83,5 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     public void setOnItemClickListener(OnItemClickListener listener){
         this.listener = listener;
     }
+
 }

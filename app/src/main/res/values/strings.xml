@@ -9,7 +9,6 @@
     <string name="event_cancel_alarm">Sveglia annullata</string>
     <string name="event_delete_alarm">Sveglia eliminata</string>
     <string name="deleted_all_alarms">Tutte le sveglie sono state eliminate</string>
-    <string name="enter_alarm_title_hint">Inserisci un titolo</string>
     <string name="alarm_title_label">Titolo</string>
     <string name="alarm_time_label">Ora</string>
     <string name="vibrator_label">Vibrazione</string>

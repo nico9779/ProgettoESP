@@ -25,26 +25,21 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/add_alarm_toolbar">
 
-        <TextView
-            android:id="@+id/title_label"
-            android:layout_width="wrap_content"
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_height="wrap_content"
-            android:textSize="50sp"
-            android:textColor="@color/nero"
-            android:text="@string/alarm_title_label"/>
+            app:hintTextAppearance="@style/EditTextHintLabel">
 
-        <EditText
-            android:id="@+id/alarm_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignBaseline="@id/title_label"
-            android:layout_toEndOf="@id/title_label"
-            android:hint="@string/enter_alarm_title_hint"
-            android:inputType="textCapSentences"
-            android:textSize="25sp"
-            tools:ignore="Autofill" />
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/alarm_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/alarm_title_label"
+                android:inputType="textCapSentences"
+                android:textSize="25sp" />
+
+        </android.support.design.widget.TextInputLayout>
 
     </RelativeLayout>
 
@@ -64,7 +59,7 @@
             android:text="@string/alarm_time_label" />
 
         <TextView
-            android:id="@+id/time"
+            android:id="@+id/time_picked"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/time_label"

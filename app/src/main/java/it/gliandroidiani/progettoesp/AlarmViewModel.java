@@ -18,8 +18,8 @@ public class AlarmViewModel extends AndroidViewModel {
         allAlarms = repository.getAllAlarms();
     }
 
-    public void addAlarm(Alarm alarm){
-        repository.addAlarm(alarm);
+    public long addAlarm(Alarm alarm){
+        return repository.addAlarm(alarm);
     }
 
     public void updateAlarm(Alarm alarm){

@@ -1,7 +1,10 @@
 package it.gliandroidiani.progettoesp;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -17,13 +20,14 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 
 public class ActivityAddEditAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
     private AlarmViewModel alarmViewModel;
     Toolbar alarmToolbar;
-    TextView time;
+    TextView time_picked;
     TextView vibration_state;
     EditText alarmTitle;
     SwitchCompat vibration_switch;
@@ -32,9 +36,9 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_alarm);
+        setContentView(R.layout.activity_add_edit_alarm);
 
-        time = findViewById(R.id.time);
+        time_picked = findViewById(R.id.time_picked);
         vibration_switch = findViewById(R.id.vibration_switch);
         vibration_state = findViewById(R.id.vibration_state);
         alarmTitle = findViewById(R.id.alarm_title);
@@ -45,10 +49,10 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
 
 
         final Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int hours = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
-        time.setText(hour+":"+minute);
+        updateTimeText(hours, minute);
 
         //Metodo che viene invocato quando cambio lo stato dello switch
         vibration_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -65,14 +69,19 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         if(intent.hasExtra(AlarmFragment.EXTRA_ID)){
             alarmToolbar.setTitle("Modifica sveglia");
             alarmTitle.setText(intent.getStringExtra(AlarmFragment.EXTRA_TITLE));
-            time.setText(intent.getIntExtra(AlarmFragment.EXTRA_HOURS, 0)+":"+intent.getIntExtra(AlarmFragment.EXTRA_MINUTE, 0));
+            updateTimeText(intent.getIntExtra(AlarmFragment.EXTRA_HOURS, 0),intent.getIntExtra(AlarmFragment.EXTRA_MINUTE, 0));
             vibration_switch.setChecked(intent.getBooleanExtra(AlarmFragment.EXTRA_VIBRATION, false));
+        }
+
+        if(savedInstanceState != null){
+            String timePicked = savedInstanceState.getString("timePicked");
+            if(timePicked != null) time_picked.setText(timePicked);
         }
     }
 
     private void saveAlarm(){
         String title = alarmTitle.getText().toString();
-        String textTime = time.getText().toString();
+        String textTime = time_picked.getText().toString();
         int hours = 0;
         int minute = 0;
         for (int i = 0; i < textTime.length(); i++) {
@@ -89,19 +98,26 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             return;
         }
 
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, hours);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, 0);
+
         if(!getIntent().hasExtra(AlarmFragment.EXTRA_ID)){
             Alarm alarm = new Alarm(title, hours, minute, vibration);
-            alarmViewModel.addAlarm(alarm);
+            long alarmID = alarmViewModel.addAlarm(alarm);
+            startAlarm(c, alarmID, alarm);
             Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
         }
         else {
-            int id = getIntent().getIntExtra(AlarmFragment.EXTRA_ID, -1);
+            long id = getIntent().getLongExtra(AlarmFragment.EXTRA_ID, -1);
             if (id == -1)
                 Toast.makeText(this, "La sveglia non può essere modificata", Toast.LENGTH_SHORT).show();
             else {
                 Alarm alarm = new Alarm(title, hours, minute, vibration);
                 alarm.setId(id);
                 alarmViewModel.updateAlarm(alarm);
+                startAlarm(c, id, alarm);
                 Toast.makeText(this, "Sveglia modificata", Toast.LENGTH_SHORT).show();
             }
         }
@@ -137,12 +153,42 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        TextView textView = findViewById(R.id.time);
-        textView.setText(hourOfDay+":"+minute);
+        updateTimeText(hourOfDay, minute);
     }
 
     public void setTime(View view) {
         DialogFragment timePicker = new TimePickerFragment();
         timePicker.show(getSupportFragmentManager(), "Time Picker");
+    }
+
+    private void startAlarm(Calendar c, long alarmID, Alarm alarm){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        intent.putExtra("Title", alarm.getTitle());
+        intent.putExtra("AlarmID", alarmID);
+        intent.putExtra("Vibration", alarm.isVibration());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if(c.before(Calendar.getInstance())){
+            c.add(Calendar.DATE, 1);
+        }
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+    }
+
+    private void updateTimeText(int hours, int minute) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, hours);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, 0);
+        String timeText = DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime());
+        time_picked.setText(timeText);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        String timePicked = time_picked.getText().toString();
+        outState.putString("timePicked", timePicked);
+        super.onSaveInstanceState(outState);
     }
 }

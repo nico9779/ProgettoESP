@@ -19,7 +19,7 @@ public interface AlarmDao {
     void deleteAllAlarms();
 
     @Insert
-    void addAlarm(Alarm alarm);
+    long addAlarm(Alarm alarm);
 
     @Update
     void updateAlarm(Alarm alarm);

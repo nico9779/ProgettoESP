@@ -1,6 +1,9 @@
 package it.gliandroidiani.progettoesp;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.provider.AlarmClock;
 import android.support.annotation.NonNull;
@@ -13,6 +16,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
             navigationView.setSelectedItemId(R.id.alarm);
         }
 
-        addAlarmAssistant();
+        Intent intent = getIntent();
+        addAlarmAssistant(intent);
     }
 
     //Metodo per rimpiazzare un fragment in activity_main.xml
@@ -94,8 +100,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Metodo per gestire l'interazione con assistant
-    private void addAlarmAssistant(){
-        Intent intent = getIntent();
+    private void addAlarmAssistant(Intent intent){
         Log.d(LOG_MAIN_ACTIVITY, String.valueOf(intent.getAction()));
         if(!isConfigurationChanged) {
             // verifico se l'intent che ricevo è triggerato dall'assistent per impostare una sveglia
@@ -104,8 +109,13 @@ public class MainActivity extends AppCompatActivity {
                 if (intent.hasExtra(AlarmClock.EXTRA_HOUR) && intent.hasExtra(AlarmClock.EXTRA_MINUTES)) {
                     int hours = intent.getIntExtra(AlarmClock.EXTRA_HOUR, -1);
                     int minute = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, -1);
+                    Calendar c = Calendar.getInstance();
+                    c.set(Calendar.HOUR_OF_DAY, hours);
+                    c.set(Calendar.MINUTE, minute);
+                    c.set(Calendar.SECOND, 0);
                     Alarm alarm = new Alarm("Sveglia", hours, minute, false);
-                    alarmViewModel.addAlarm(alarm);
+                    long alarmID = alarmViewModel.addAlarm(alarm);
+                    startAlarm(c, alarmID, alarm);
                     Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -120,5 +130,20 @@ public class MainActivity extends AppCompatActivity {
         int item_selected = navigationView.getSelectedItemId();
         outState.putInt("item_selected", item_selected);
         super.onSaveInstanceState(outState);
+    }
+
+    private void startAlarm(Calendar c, long alarmID, Alarm alarm){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        intent.putExtra("Title", alarm.getTitle());
+        intent.putExtra("AlarmID", alarmID);
+        intent.putExtra("Vibration", alarm.isVibration());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) alarmID, intent, 0);
+
+        if(c.before(Calendar.getInstance())){
+            c.add(Calendar.DATE, 1);
+        }
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 }

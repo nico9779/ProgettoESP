@@ -21,4 +21,9 @@
         <item name="android:tint">@color/bianco</item>
     </style>
 
+    <!-- Stile della EditText -->
+    <style name="EditTextHintLabel" parent="TextAppearance.Design.Hint">
+        <item name="android:textSize">20sp</item>
+    </style>
+
 </resources>

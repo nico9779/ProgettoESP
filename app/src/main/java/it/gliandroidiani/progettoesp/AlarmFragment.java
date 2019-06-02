@@ -1,8 +1,11 @@
 package it.gliandroidiani.progettoesp;
 
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -83,7 +86,9 @@ public class AlarmFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                alarmViewModel.deleteAlarm(adapter.getAlarmAt(viewHolder.getAdapterPosition()));
+                Alarm alarm = adapter.getAlarmAt(viewHolder.getAdapterPosition());
+                alarmViewModel.deleteAlarm(alarm);
+                cancelAlarm(alarm.getId());
                 Toast.makeText(getActivity(), R.string.event_delete_alarm, Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
@@ -114,9 +119,28 @@ public class AlarmFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.delete_all_alarms) {
             alarmViewModel.deleteAllAlarms();
+            cancelAllAlarm();
             Toast.makeText(getActivity(), R.string.deleted_all_alarms, Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void cancelAlarm(long alarmID) {
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getActivity(), AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) alarmID, intent, 0);
+
+        alarmManager.cancel(pendingIntent);
+    }
+
+    private void cancelAllAlarm() {
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getActivity(), AlertReceiver.class);
+        List<Alarm> alarms = alarmViewModel.getAllAlarms().getValue();
+        for(Alarm alarm:alarms) {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) alarm.getId(), intent, 0);
+            alarmManager.cancel(pendingIntent);
+        }
     }
 }

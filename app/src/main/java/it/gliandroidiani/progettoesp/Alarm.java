@@ -16,7 +16,7 @@ public class Alarm {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    private int id;
+    private long id;
 
     @ColumnInfo(name = "title")
     private String title;
@@ -30,11 +30,11 @@ public class Alarm {
     @ColumnInfo(name = "vibration")
     private boolean vibration;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
