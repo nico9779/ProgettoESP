@@ -1,9 +1,7 @@
 package it.gliandroidiani.progettoesp;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.VoiceInteractor;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -118,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
                     Alarm alarm;
                     if(intent.hasExtra(AlarmClock.EXTRA_MESSAGE)){
                         String title = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
-                        alarm = new Alarm(title, hours, minute, false);
+                        alarm = new Alarm(title, hours, minute, true, false);
                     }
-                    else alarm = new Alarm("Sveglia", hours, minute, false);
+                    else alarm = new Alarm("Sveglia", hours, minute, true,false);
                     long alarmID = alarmViewModel.addAlarm(alarm);
                     startAlarm(c, alarmID, alarm);
                     Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();

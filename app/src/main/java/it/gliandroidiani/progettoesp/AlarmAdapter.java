@@ -33,10 +33,14 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         c.set(Calendar.MINUTE, currentAlarm.getMinute());
         c.set(Calendar.SECOND, 0);
         viewHolder.time.setText(DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime()));
-        if(currentAlarm.isVibration())
-            viewHolder.vibration.setText(R.string.vibration_on);
+        if(currentAlarm.isRingtone())
+            viewHolder.ringtone.setText(R.string.on_label);
         else
-            viewHolder.vibration.setText(R.string.vibration_off);
+            viewHolder.ringtone.setText(R.string.off_label);
+        if(currentAlarm.isVibration())
+            viewHolder.vibration.setText(R.string.on_label);
+        else
+            viewHolder.vibration.setText(R.string.off_label);
     }
 
     @Override
@@ -44,12 +48,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         return alarms.size();
     }
 
-    public void setAlarms(List<Alarm> alarms){
+    void setAlarms(List<Alarm> alarms){
         this.alarms = alarms;
         notifyDataSetChanged();
     }
 
-    public Alarm getAlarmAt(int position){
+    Alarm getAlarmAt(int position){
         return alarms.get(position);
     }
 
@@ -57,12 +61,14 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
         private TextView title;
         private TextView time;
+        private TextView ringtone;
         private TextView vibration;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.alarm_title_item);
             time = itemView.findViewById(R.id.alarm_time_item);
+            ringtone = itemView.findViewById(R.id.alarm_ringtone_item);
             vibration = itemView.findViewById(R.id.alarm_vibration_item);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +86,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         void onItemClick(Alarm alarm);
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener){
+    void setOnItemClickListener(OnItemClickListener listener){
         this.listener = listener;
     }
 

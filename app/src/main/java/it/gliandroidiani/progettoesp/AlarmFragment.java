@@ -39,6 +39,7 @@ public class AlarmFragment extends Fragment {
     public static final String EXTRA_TITLE = "it.gliandroidiani.progettoesp.EXTRA_TITLE";
     public static final String EXTRA_HOURS = "it.gliandroidiani.progettoesp.EXTRA_HOURS";
     public static final String EXTRA_MINUTE = "it.gliandroidiani.progettoesp.EXTRA_MINUTE";
+    public static final String EXTRA_RINGTONE = "it.gliandroidiani.progettoesp.EXTRA_RINGTONE";
     public static final String EXTRA_VIBRATION = "it.gliandroidiani.progettoesp.EXTRA_VIBRATION";
 
     private AlarmViewModel alarmViewModel;
@@ -101,6 +102,7 @@ public class AlarmFragment extends Fragment {
                 intent.putExtra(EXTRA_TITLE, alarm.getTitle());
                 intent.putExtra(EXTRA_HOURS, alarm.getHours());
                 intent.putExtra(EXTRA_MINUTE, alarm.getMinute());
+                intent.putExtra(EXTRA_RINGTONE, alarm.isRingtone());
                 intent.putExtra(EXTRA_VIBRATION, alarm.isVibration());
                 startActivityForResult(intent, EDIT_ALARM_REQUEST);
             }

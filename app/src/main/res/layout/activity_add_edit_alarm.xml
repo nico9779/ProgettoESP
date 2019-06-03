@@ -71,10 +71,48 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/vibration_layout"
+        android:id="@+id/ringtone_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/time_layout">
+
+        <TextView
+            android:id="@+id/ringtone_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_margin="10dp"
+            android:textColor="@color/nero"
+            android:text="@string/ringtone_label" />
+
+        <TextView
+            android:id="@+id/ringtone_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/nero"
+            android:text="@string/off_label"
+            android:textSize="30sp"
+            android:layout_alignBaseline="@id/ringtone_label"
+            android:layout_toEndOf="@id/ringtone_label"
+            android:layout_toStartOf="@id/ringtone_switch"/>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/ringtone_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:theme="@style/ColorSwitch"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/vibration_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ringtone_layout">
 
         <TextView
             android:id="@+id/vibration_label"
@@ -90,7 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/nero"
-            android:text="@string/vibration_off"
+            android:text="@string/off_label"
             android:textSize="30sp"
             android:layout_alignBaseline="@id/vibration_label"
             android:layout_toEndOf="@id/vibration_label"

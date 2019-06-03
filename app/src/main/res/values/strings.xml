@@ -12,7 +12,8 @@
     <string name="alarm_title_label">Titolo</string>
     <string name="alarm_time_label">Ora</string>
     <string name="vibrator_label">Vibrazione</string>
-    <string name="vibration_on">On</string>
-    <string name="vibration_off">Off</string>
+    <string name="on_label">On</string>
+    <string name="off_label">Off</string>
     <string name="event_delete_all_alarms">Elimina tutte le sveglie</string>
+    <string name="ringtone_label">Suoneria</string>
 </resources>

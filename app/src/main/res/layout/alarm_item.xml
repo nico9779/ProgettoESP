@@ -28,11 +28,35 @@
             android:textColor="@color/nero"
             android:text="10"/>
 
+        <RelativeLayout
+            android:id="@+id/ringtone_layout_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/alarm_time_item">
+
+            <TextView
+                android:id="@+id/ringtone_label_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ringtone_label"
+                android:textColor="@color/nero"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+            <TextView
+                android:id="@+id/alarm_ringtone_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/ringtone_label_item"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/nero"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:text="On"/>
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/alarm_time_item">
+            android:layout_below="@id/ringtone_layout_item">
 
             <TextView
                 android:id="@+id/vibration_label_item"

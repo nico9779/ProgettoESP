@@ -28,8 +28,10 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
     private AlarmViewModel alarmViewModel;
     Toolbar alarmToolbar;
     TextView time_picked;
+    TextView ringtone_state;
     TextView vibration_state;
     EditText alarmTitle;
+    SwitchCompat ringtone_switch;
     SwitchCompat vibration_switch;
 
     @Override
@@ -39,6 +41,8 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         setContentView(R.layout.activity_add_edit_alarm);
 
         time_picked = findViewById(R.id.time_picked);
+        ringtone_state = findViewById(R.id.ringtone_state);
+        ringtone_switch = findViewById(R.id.ringtone_switch);
         vibration_switch = findViewById(R.id.vibration_switch);
         vibration_state = findViewById(R.id.vibration_state);
         alarmTitle = findViewById(R.id.alarm_title);
@@ -54,14 +58,24 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
 
         updateTimeText(hours, minute);
 
+        ringtone_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                    ringtone_state.setText(R.string.on_label);
+                else
+                    ringtone_state.setText(R.string.off_label);
+            }
+        });
+
         //Metodo che viene invocato quando cambio lo stato dello switch
         vibration_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked)
-                    vibration_state.setText(R.string.vibration_on);
+                    vibration_state.setText(R.string.on_label);
                 else
-                    vibration_state.setText(R.string.vibration_off);
+                    vibration_state.setText(R.string.off_label);
             }
         });
 
@@ -70,6 +84,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             alarmToolbar.setTitle("Modifica sveglia");
             alarmTitle.setText(intent.getStringExtra(AlarmFragment.EXTRA_TITLE));
             updateTimeText(intent.getIntExtra(AlarmFragment.EXTRA_HOURS, 0),intent.getIntExtra(AlarmFragment.EXTRA_MINUTE, 0));
+            ringtone_switch.setChecked(intent.getBooleanExtra(AlarmFragment.EXTRA_RINGTONE, false));
             vibration_switch.setChecked(intent.getBooleanExtra(AlarmFragment.EXTRA_VIBRATION, false));
         }
 
@@ -91,6 +106,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
                 break;
             }
         }
+        boolean ringtone = ringtone_switch.isChecked();
         boolean vibration = vibration_switch.isChecked();
 
         if(title.trim().isEmpty()) {
@@ -104,7 +120,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         c.set(Calendar.SECOND, 0);
 
         if(!getIntent().hasExtra(AlarmFragment.EXTRA_ID)){
-            Alarm alarm = new Alarm(title, hours, minute, vibration);
+            Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration);
             long alarmID = alarmViewModel.addAlarm(alarm);
             startAlarm(c, alarmID, alarm);
             Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
@@ -114,7 +130,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             if (id == -1)
                 Toast.makeText(this, "La sveglia non può essere modificata", Toast.LENGTH_SHORT).show();
             else {
-                Alarm alarm = new Alarm(title, hours, minute, vibration);
+                Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration);
                 alarm.setId(id);
                 alarmViewModel.updateAlarm(alarm);
                 startAlarm(c, id, alarm);
@@ -166,6 +182,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         Intent intent = new Intent(this, AlertReceiver.class);
         intent.putExtra("Title", alarm.getTitle());
         intent.putExtra("AlarmID", alarmID);
+        intent.putExtra("Ringtone", alarm.isRingtone());
         intent.putExtra("Vibration", alarm.isVibration());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
