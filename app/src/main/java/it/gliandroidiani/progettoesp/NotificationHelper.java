@@ -52,7 +52,11 @@ public class NotificationHelper extends ContextWrapper {
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID);
+        NotificationCompat.Builder builder;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID);
+        else
+            builder = new NotificationCompat.Builder(getApplicationContext());
         builder.setContentTitle(title)
                 .setContentText("Sveglia!!!")
                 .setSmallIcon(R.drawable.ic_alarm_black_24dp)
