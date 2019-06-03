@@ -55,16 +55,15 @@ public class NotificationHelper extends ContextWrapper {
         NotificationCompat.Builder builder;
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID);
-        else
+        else {
             builder = new NotificationCompat.Builder(getApplicationContext());
+            builder.setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://"+getApplicationContext().getPackageName()+"/"+R.raw.alarmclocksound));
+        }
         builder.setContentTitle(title)
                 .setContentText("Sveglia!!!")
                 .setSmallIcon(R.drawable.ic_alarm_black_24dp)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            builder.setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://"+getApplicationContext().getPackageName()+"/"+R.raw.alarmclocksound));
-        }
         if(vibration) {
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

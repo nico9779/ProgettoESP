@@ -14,6 +14,6 @@ public class AlertReceiver extends BroadcastReceiver {
         boolean vibration = intent.getBooleanExtra("Vibration", false);
         NotificationHelper notificationHelper = new NotificationHelper(context);
         NotificationCompat.Builder nb = notificationHelper.getChannelNotification(title, alarmID, vibration);
-        notificationHelper.getManager().notify(123456789, nb.build());
+        notificationHelper.getManager().notify((int) alarmID, nb.build());
     }
 }
