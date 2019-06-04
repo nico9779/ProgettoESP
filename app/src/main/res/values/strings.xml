@@ -5,4 +5,6 @@
     <string name="starting_string_note">Premi il bottone in basso per iniziare a creare la tua prima nota!</string>
     <string name="menu_alarm">Sveglie</string>
     <string name="menu_note">Note</string>
+    <string name="this_is_a_note_demo">this is a note demo</string>
+    <string name="data_di_oggi_es_04_06_2019">data di oggi es: 04/06/2019</string>
 </resources>
