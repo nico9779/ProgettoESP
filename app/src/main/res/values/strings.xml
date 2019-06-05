@@ -16,4 +16,5 @@
     <string name="off_label">Off</string>
     <string name="event_delete_all_alarms">Elimina tutte le sveglie</string>
     <string name="ringtone_label">Suoneria</string>
+    <string name="imageview_description">ImageView to set an alarm on or off</string>
 </resources>

@@ -120,7 +120,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         c.set(Calendar.SECOND, 0);
 
         if(!getIntent().hasExtra(AlarmFragment.EXTRA_ID)){
-            Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration);
+            Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, true);
             long alarmID = alarmViewModel.addAlarm(alarm);
             startAlarm(c, alarmID, alarm);
             Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
@@ -130,7 +130,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             if (id == -1)
                 Toast.makeText(this, "La sveglia non può essere modificata", Toast.LENGTH_SHORT).show();
             else {
-                Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration);
+                Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, true);
                 alarm.setId(id);
                 alarmViewModel.updateAlarm(alarm);
                 startAlarm(c, id, alarm);

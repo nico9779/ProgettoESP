@@ -7,12 +7,13 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity(tableName = "alarm_table")
 public class Alarm {
 
-    public Alarm(String title, int hours, int minute, boolean ringtone, boolean vibration) {
+    public Alarm(String title, int hours, int minute, boolean ringtone, boolean vibration, boolean active) {
         this.title = title;
         this.hours = hours;
         this.minute = minute;
         this.ringtone = ringtone;
         this.vibration = vibration;
+        this.active = active;
     }
 
     @PrimaryKey(autoGenerate = true)
@@ -33,6 +34,9 @@ public class Alarm {
 
     @ColumnInfo(name = "vibration")
     private boolean vibration;
+
+    @ColumnInfo(name = "active")
+    private boolean active;
 
     public long getId() {
         return id;
@@ -80,5 +84,13 @@ public class Alarm {
 
     public void setVibration(boolean vibration) {
         this.vibration = vibration;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

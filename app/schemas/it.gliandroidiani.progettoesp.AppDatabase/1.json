@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "dd4b998ad5a345ffbe8af7e4b1557fca",
+    "identityHash": "80d82b7f3000d1e09995a7d29bf5282d",
     "entities": [
       {
         "tableName": "alarm_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `hours` INTEGER NOT NULL, `minute` INTEGER NOT NULL, `ringtone` INTEGER NOT NULL, `vibration` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `hours` INTEGER NOT NULL, `minute` INTEGER NOT NULL, `ringtone` INTEGER NOT NULL, `vibration` INTEGER NOT NULL, `active` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -43,6 +43,12 @@
             "columnName": "vibration",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "active",
+            "columnName": "active",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -57,7 +63,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"dd4b998ad5a345ffbe8af7e4b1557fca\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"80d82b7f3000d1e09995a7d29bf5282d\")"
     ]
   }
 }

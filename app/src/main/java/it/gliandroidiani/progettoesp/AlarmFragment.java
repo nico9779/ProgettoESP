@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -106,6 +107,26 @@ public class AlarmFragment extends Fragment {
                 intent.putExtra(EXTRA_VIBRATION, alarm.isVibration());
                 startActivityForResult(intent, EDIT_ALARM_REQUEST);
             }
+
+            @Override
+            public void onImageClick(Alarm alarm, int position) {
+                if(alarm.isActive()){
+                    alarm.setActive(false);
+                    adapter.notifyItemChanged(position);
+                    cancelAlarm(alarm.getId());
+                    Toast.makeText(getActivity(), "Sveglia disattivata", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    alarm.setActive(true);
+                    adapter.notifyItemChanged(position);
+                    Calendar c = Calendar.getInstance();
+                    c.set(Calendar.HOUR_OF_DAY, alarm.getHours());
+                    c.set(Calendar.MINUTE, alarm.getMinute());
+                    c.set(Calendar.SECOND, 0);
+                    startAlarm(c,alarm.getId(),alarm);
+                    Toast.makeText(getActivity(), "Sveglia riattivata", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
 
         return view;
@@ -126,6 +147,22 @@ public class AlarmFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startAlarm(Calendar c, long alarmID, Alarm alarm){
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getActivity(), AlertReceiver.class);
+        intent.putExtra("Title", alarm.getTitle());
+        intent.putExtra("AlarmID", alarmID);
+        intent.putExtra("Ringtone", alarm.isRingtone());
+        intent.putExtra("Vibration", alarm.isVibration());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if(c.before(Calendar.getInstance())){
+            c.add(Calendar.DATE, 1);
+        }
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
     private void cancelAlarm(long alarmID) {

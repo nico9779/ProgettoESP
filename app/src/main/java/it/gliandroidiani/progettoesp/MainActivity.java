@@ -116,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
                     Alarm alarm;
                     if(intent.hasExtra(AlarmClock.EXTRA_MESSAGE)){
                         String title = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
-                        alarm = new Alarm(title, hours, minute, true, false);
+                        alarm = new Alarm(title, hours, minute, true, false, true);
                     }
-                    else alarm = new Alarm("Sveglia", hours, minute, true,false);
+                    else alarm = new Alarm("Sveglia", hours, minute, true,false, true);
                     long alarmID = alarmViewModel.addAlarm(alarm);
                     startAlarm(c, alarmID, alarm);
                     Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
