@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "80d82b7f3000d1e09995a7d29bf5282d",
+    "identityHash": "745a300c8482a4efae788a585f1acf0b",
     "entities": [
       {
         "tableName": "alarm_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `hours` INTEGER NOT NULL, `minute` INTEGER NOT NULL, `ringtone` INTEGER NOT NULL, `vibration` INTEGER NOT NULL, `active` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `hours` INTEGER NOT NULL, `minute` INTEGER NOT NULL, `ringtone` INTEGER NOT NULL, `vibration` INTEGER NOT NULL, `active` INTEGER NOT NULL, `repetition_type` TEXT, `repetition_days` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -49,6 +49,18 @@
             "columnName": "active",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "repetitionType",
+            "columnName": "repetition_type",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "repetitionDays",
+            "columnName": "repetition_days",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -63,7 +75,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"80d82b7f3000d1e09995a7d29bf5282d\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"745a300c8482a4efae788a585f1acf0b\")"
     ]
   }
 }

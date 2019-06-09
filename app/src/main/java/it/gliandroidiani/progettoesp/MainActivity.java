@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
@@ -113,12 +115,32 @@ public class MainActivity extends AppCompatActivity {
                     c.set(Calendar.HOUR_OF_DAY, hours);
                     c.set(Calendar.MINUTE, minute);
                     c.set(Calendar.SECOND, 0);
-                    Alarm alarm;
+
+                    String title = "Sveglia";
+
                     if(intent.hasExtra(AlarmClock.EXTRA_MESSAGE)){
-                        String title = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
-                        alarm = new Alarm(title, hours, minute, true, false, true);
+                        title = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
                     }
-                    else alarm = new Alarm("Sveglia", hours, minute, true,false, true);
+
+                    String repetitionType = "Una sola volta";
+                    boolean[] repetitionDays = new boolean[7];
+
+                    if(intent.hasExtra(AlarmClock.EXTRA_DAYS)){
+                        ArrayList<Integer> repetitionDaysArrayList = intent.getIntegerArrayListExtra(AlarmClock.EXTRA_DAYS);
+                        if(repetitionDaysArrayList.size() == 7)
+                            repetitionType = "Giornalmente";
+                        else {
+                            repetitionType = "Giorni della settimana";
+                            for (int i = 0; i <= 6; i++) {
+                                if(repetitionDaysArrayList.contains(i+2))
+                                    repetitionDays[i] = true;
+                            }
+                            if(repetitionDaysArrayList.contains(1))
+                                repetitionDays[6] = true;
+                        }
+                    }
+                    Alarm alarm = new Alarm(title, hours, minute, true,false, true, repetitionType);
+                    alarm.setRepetitionDays(repetitionDays);
                     long alarmID = alarmViewModel.addAlarm(alarm);
                     startAlarm(c, alarmID, alarm);
                     Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
@@ -142,13 +164,49 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AlertReceiver.class);
         intent.putExtra("Title", alarm.getTitle());
         intent.putExtra("AlarmID", alarmID);
+        intent.putExtra("Hours", alarm.getHours());
+        intent.putExtra("Minute", alarm.getMinute());
+        intent.putExtra("Ringtone", alarm.isRingtone());
         intent.putExtra("Vibration", alarm.isVibration());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) alarmID, intent, 0);
+        intent.putExtra("Repetition", alarm.getRepetitionType());
+        String repetition = alarm.getRepetitionType();
+        if(repetition.equals("Una sola volta")){
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if(c.before(Calendar.getInstance())){
-            c.add(Calendar.DATE, 1);
+            if(c.before(Calendar.getInstance())){
+                c.add(Calendar.DATE, 1);
+            }
+
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
         }
+        if(repetition.equals("Giornalmente")){
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+            if(c.before(Calendar.getInstance())){
+                c.add(Calendar.DATE, 1);
+            }
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+        }
+        else {
+            for (int i = 0; i <= 6; i++) {
+                if(alarm.getRepetitionDays()[i]){
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6+i), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    if(i!=6) {
+                        c.set(Calendar.DAY_OF_WEEK, i+2);
+                    }
+                    else{
+                        c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                    }
+
+                    if(c.before(Calendar.getInstance())){
+                        c.add(Calendar.DATE, 7);
+                    }
+
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (AlarmManager.INTERVAL_DAY)*7,pendingIntent);
+                }
+            }
+        }
     }
 }

@@ -54,6 +54,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/vibration_layout_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/ringtone_layout_item">
@@ -74,6 +75,30 @@
                 android:textColor="@color/nero"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:text="On"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/vibration_layout_item">
+
+            <TextView
+                android:id="@+id/repetition_label_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/repetition_label"
+                android:textColor="@color/nero"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+            <TextView
+                android:id="@+id/alarm_repetition_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/repetition_label_item"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/nero"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:text="Una sola volta"/>
 
         </RelativeLayout>
 

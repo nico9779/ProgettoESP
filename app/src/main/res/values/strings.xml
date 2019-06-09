@@ -17,4 +17,21 @@
     <string name="event_delete_all_alarms">Elimina tutte le sveglie</string>
     <string name="ringtone_label">Suoneria</string>
     <string name="imageview_description">ImageView to set an alarm on or off</string>
+    <string name="alarm_repetition_label">Ripetizione</string>
+    <string name="no_repetition_option_selected">Nessuna opzione</string>
+    <string name="repetition_label">Ripetizione</string>
+    <string-array name="repetition_options" >
+        <item>Una sola volta</item>
+        <item>Giornalmente</item>
+        <item>Giorni della settimana</item>
+    </string-array>
+    <string-array name="repetition_options_days" >
+        <item>Lunedì</item>
+        <item>Martedì</item>
+        <item>Mercoledì</item>
+        <item>Giovedì</item>
+        <item>Venerdì</item>
+        <item>Sabato</item>
+        <item>Domenica</item>
+    </string-array>
 </resources>

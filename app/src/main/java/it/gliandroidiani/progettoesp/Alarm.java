@@ -4,16 +4,19 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.util.List;
+
 @Entity(tableName = "alarm_table")
 public class Alarm {
 
-    public Alarm(String title, int hours, int minute, boolean ringtone, boolean vibration, boolean active) {
+    public Alarm(String title, int hours, int minute, boolean ringtone, boolean vibration, boolean active, String repetitionType) {
         this.title = title;
         this.hours = hours;
         this.minute = minute;
         this.ringtone = ringtone;
         this.vibration = vibration;
         this.active = active;
+        this.repetitionType = repetitionType;
     }
 
     @PrimaryKey(autoGenerate = true)
@@ -37,6 +40,12 @@ public class Alarm {
 
     @ColumnInfo(name = "active")
     private boolean active;
+
+    @ColumnInfo(name = "repetition_type")
+    private String repetitionType;
+
+    @ColumnInfo(name = "repetition_days")
+    private boolean[] repetitionDays;
 
     public long getId() {
         return id;
@@ -92,5 +101,21 @@ public class Alarm {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getRepetitionType() {
+        return repetitionType;
+    }
+
+    public void setRepetitionType(String repetitionType) {
+        this.repetitionType = repetitionType;
+    }
+
+    public boolean[] getRepetitionDays() {
+        return repetitionDays;
+    }
+
+    public void setRepetitionDays(boolean[] repetitionDays) {
+        this.repetitionDays = repetitionDays;
     }
 }

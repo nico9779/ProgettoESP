@@ -46,6 +46,18 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             viewHolder.alarmImg.setImageResource(R.drawable.ic_alarm_on);
         else
             viewHolder.alarmImg.setImageResource(R.drawable.ic_alarm_off);
+        if(currentAlarm.getRepetitionType().equals("Una sola volta") || currentAlarm.getRepetitionType().equals("Giornalmente"))
+            viewHolder.repetition.setText(currentAlarm.getRepetitionType());
+        else {
+            String item = "";
+            String[] repetitionOptionsDays = new String[] {"Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"};
+            for (int j = 0; j < currentAlarm.getRepetitionDays().length; j++) {
+                if(currentAlarm.getRepetitionDays()[j]){
+                    item = item + repetitionOptionsDays[j] + " ";
+                }
+            }
+            viewHolder.repetition.setText(item);
+        }
     }
 
     @Override
@@ -68,6 +80,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         private TextView time;
         private TextView ringtone;
         private TextView vibration;
+        private TextView repetition;
         private ImageView alarmImg;
 
         ViewHolder(@NonNull View itemView) {
@@ -77,6 +90,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             ringtone = itemView.findViewById(R.id.alarm_ringtone_item);
             vibration = itemView.findViewById(R.id.alarm_vibration_item);
             alarmImg = itemView.findViewById(R.id.alarm_img);
+            repetition = itemView.findViewById(R.id.alarm_repetition_item);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

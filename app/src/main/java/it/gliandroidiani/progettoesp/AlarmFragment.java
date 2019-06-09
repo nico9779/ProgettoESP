@@ -6,11 +6,13 @@ import android.app.PendingIntent;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,6 +44,8 @@ public class AlarmFragment extends Fragment {
     public static final String EXTRA_MINUTE = "it.gliandroidiani.progettoesp.EXTRA_MINUTE";
     public static final String EXTRA_RINGTONE = "it.gliandroidiani.progettoesp.EXTRA_RINGTONE";
     public static final String EXTRA_VIBRATION = "it.gliandroidiani.progettoesp.EXTRA_VIBRATION";
+    public static final String EXTRA_REPETITION_TYPE = "it.gliandroidiani.progettoesp.EXTRA_REPETITION_TYPE";
+    public static final String EXTRA_REPETITION_DAYS = "it.gliandroidiani.progettoesp.EXTRA_REPETITION_DAYS";
 
     private AlarmViewModel alarmViewModel;
     TextView noAlarmTextView;
@@ -87,11 +91,28 @@ public class AlarmFragment extends Fragment {
             }
 
             @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                Alarm alarm = adapter.getAlarmAt(viewHolder.getAdapterPosition());
-                alarmViewModel.deleteAlarm(alarm);
-                cancelAlarm(alarm.getId());
-                Toast.makeText(getActivity(), R.string.event_delete_alarm, Toast.LENGTH_SHORT).show();
+            public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int i) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
+                builder.setTitle("Elimina sveglia");
+                builder.setMessage("Sei sicuro di voler eliminare questa sveglia?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Alarm alarm = adapter.getAlarmAt(viewHolder.getAdapterPosition());
+                        alarmViewModel.deleteAlarm(alarm);
+                        cancelAlarm(alarm);
+                        Toast.makeText(getActivity(), R.string.event_delete_alarm, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        adapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         }).attachToRecyclerView(recyclerView);
 
@@ -105,6 +126,8 @@ public class AlarmFragment extends Fragment {
                 intent.putExtra(EXTRA_MINUTE, alarm.getMinute());
                 intent.putExtra(EXTRA_RINGTONE, alarm.isRingtone());
                 intent.putExtra(EXTRA_VIBRATION, alarm.isVibration());
+                intent.putExtra(EXTRA_REPETITION_TYPE, alarm.getRepetitionType());
+                intent.putExtra(EXTRA_REPETITION_DAYS, alarm.getRepetitionDays());
                 startActivityForResult(intent, EDIT_ALARM_REQUEST);
             }
 
@@ -113,7 +136,7 @@ public class AlarmFragment extends Fragment {
                 if(alarm.isActive()){
                     alarm.setActive(false);
                     adapter.notifyItemChanged(position);
-                    cancelAlarm(alarm.getId());
+                    cancelAlarm(alarm);
                     Toast.makeText(getActivity(), "Sveglia disattivata", Toast.LENGTH_SHORT).show();
                 }
                 else {
@@ -141,9 +164,26 @@ public class AlarmFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.delete_all_alarms) {
-            alarmViewModel.deleteAllAlarms();
-            cancelAllAlarm();
-            Toast.makeText(getActivity(), R.string.deleted_all_alarms, Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
+            builder.setTitle("Elimina sveglie");
+            builder.setMessage("Sei sicuro di voler eliminare tutte le sveglie?");
+            builder.setCancelable(false);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    alarmViewModel.deleteAllAlarms();
+                    cancelAllAlarm();
+                    Toast.makeText(getActivity(), R.string.deleted_all_alarms, Toast.LENGTH_SHORT).show();
+                }
+            });
+            builder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -154,23 +194,68 @@ public class AlarmFragment extends Fragment {
         Intent intent = new Intent(getActivity(), AlertReceiver.class);
         intent.putExtra("Title", alarm.getTitle());
         intent.putExtra("AlarmID", alarmID);
+        intent.putExtra("Hours", alarm.getHours());
+        intent.putExtra("Minute", alarm.getMinute());
         intent.putExtra("Ringtone", alarm.isRingtone());
         intent.putExtra("Vibration", alarm.isVibration());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        intent.putExtra("Repetition", alarm.getRepetitionType());
+        String repetition = alarm.getRepetitionType();
+        if(repetition.equals("Una sola volta")){
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if(c.before(Calendar.getInstance())){
-            c.add(Calendar.DATE, 1);
+            if(c.before(Calendar.getInstance())){
+                c.add(Calendar.DATE, 1);
+            }
+
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
         }
+        if(repetition.equals("Giornalmente")){
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+            if(c.before(Calendar.getInstance())){
+                c.add(Calendar.DATE, 1);
+            }
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+        }
+        else {
+            for (int i = 0; i <= 6; i++) {
+                if(alarm.getRepetitionDays()[i]){
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) (alarmID*6+i), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    if(i!=6) {
+                        c.set(Calendar.DAY_OF_WEEK, i+2);
+                    }
+                    else{
+                        c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                    }
+
+                    if(c.before(Calendar.getInstance())){
+                        c.add(Calendar.DATE, 7);
+                    }
+
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (AlarmManager.INTERVAL_DAY)*7,pendingIntent);
+                }
+            }
+        }
     }
 
-    private void cancelAlarm(long alarmID) {
+    private void cancelAlarm(Alarm alarm) {
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(getActivity(), AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) alarmID, intent, 0);
 
-        alarmManager.cancel(pendingIntent);
+        if(alarm.getRepetitionType().equals("Una sola volta") || alarm.getRepetitionType().equals("Giornalmente")) {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) (alarm.getId() * 6), intent, 0);
+            alarmManager.cancel(pendingIntent);
+        }
+        else {
+            for (int i = 0; i <= 6; i++) {
+                if(alarm.getRepetitionDays()[i]){
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) (alarm.getId() * 6+i), intent, 0);
+                    alarmManager.cancel(pendingIntent);
+                }
+            }
+        }
     }
 
     private void cancelAllAlarm() {
@@ -178,8 +263,18 @@ public class AlarmFragment extends Fragment {
         Intent intent = new Intent(getActivity(), AlertReceiver.class);
         List<Alarm> alarms = alarmViewModel.getAllAlarms().getValue();
         for(Alarm alarm:alarms) {
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) alarm.getId(), intent, 0);
-            alarmManager.cancel(pendingIntent);
+            if(alarm.getRepetitionType().equals("Una sola volta") || alarm.getRepetitionType().equals("Giornalmente")) {
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) (alarm.getId() * 6), intent, 0);
+                alarmManager.cancel(pendingIntent);
+            }
+            else {
+                for (int i = 0; i <= 6; i++) {
+                    if(alarm.getRepetitionDays()[i]){
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) (alarm.getId() * 6+i), intent, 0);
+                        alarmManager.cancel(pendingIntent);
+                    }
+                }
+            }
         }
     }
 }

@@ -5,8 +5,10 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
@@ -16,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -30,13 +33,17 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
     TextView time_picked;
     TextView ringtone_state;
     TextView vibration_state;
+    TextView repetition_picked;
     EditText alarmTitle;
     SwitchCompat ringtone_switch;
     SwitchCompat vibration_switch;
+    RelativeLayout repetitionLayout;
+    String[] repetitionOptions;
+    String[] repetitionOptionsDays;
+    boolean[] repetitionOptionsDaysChecked;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_alarm);
 
@@ -46,6 +53,13 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         vibration_switch = findViewById(R.id.vibration_switch);
         vibration_state = findViewById(R.id.vibration_state);
         alarmTitle = findViewById(R.id.alarm_title);
+        repetitionLayout = findViewById(R.id.repetition_layout);
+        repetition_picked = findViewById(R.id.repetition_picked);
+
+        repetitionOptions = getResources().getStringArray(R.array.repetition_options);
+        repetitionOptionsDays = getResources().getStringArray(R.array.repetition_options_days);
+        repetitionOptionsDaysChecked = new boolean[repetitionOptionsDays.length];
+
         alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
 
         alarmToolbar = findViewById(R.id.add_alarm_toolbar);
@@ -86,17 +100,96 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             updateTimeText(intent.getIntExtra(AlarmFragment.EXTRA_HOURS, 0),intent.getIntExtra(AlarmFragment.EXTRA_MINUTE, 0));
             ringtone_switch.setChecked(intent.getBooleanExtra(AlarmFragment.EXTRA_RINGTONE, false));
             vibration_switch.setChecked(intent.getBooleanExtra(AlarmFragment.EXTRA_VIBRATION, false));
+            String repetitionType = intent.getStringExtra(AlarmFragment.EXTRA_REPETITION_TYPE);
+            if(repetitionType.equals("Una sola volta") || repetitionType.equals("Giornalmente")){
+                repetition_picked.setText(repetitionType);
+            }
+            else {
+                boolean[] repetitionDays = intent.getBooleanArrayExtra(AlarmFragment.EXTRA_REPETITION_DAYS);
+                repetitionOptionsDaysChecked = repetitionDays;
+                String item = "";
+                for (int i = 0; i < repetitionDays.length; i++) {
+                    if(repetitionDays[i]){
+                        item = item + repetitionOptionsDays[i] + " ";
+                    }
+                }
+                repetition_picked.setText(item);
+            }
         }
+
+        repetitionLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(ActivityAddEditAlarm.this, R.style.AlertDialogStyle);
+                builder.setTitle("Scegli un'opzione");
+                builder.setCancelable(false);
+
+                builder.setItems(repetitionOptions, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which<2){
+                            repetition_picked.setText(repetitionOptions[which]);
+                        }
+                        else{
+                            dialog.dismiss();
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(ActivityAddEditAlarm.this, R.style.AlertDialogStyle);
+                            builder.setTitle("Giorni della settimana");
+                            builder.setCancelable(false);
+                            builder.setMultiChoiceItems(repetitionOptionsDays, repetitionOptionsDaysChecked, new DialogInterface.OnMultiChoiceClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                                    // do nothing
+                                }
+                            });
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    boolean isFalse = false;
+                                    String item = "";
+                                    for (int i = 0; i < repetitionOptionsDaysChecked.length; i++) {
+                                        if(repetitionOptionsDaysChecked[i]){
+                                            item = item + repetitionOptionsDays[i] + " ";
+                                        }
+                                        else {
+                                            isFalse = true;
+                                        }
+                                    }
+                                    if(isFalse && !item.equals("")) {
+                                        repetition_picked.setText(item);
+                                    }
+                                    else if(item.equals("")){
+                                        repetition_picked.setText(R.string.no_repetition_option_selected);
+                                    }
+                                    else {
+                                        repetition_picked.setText(repetitionOptions[1]);
+                                    }
+                                }
+                            });
+                            AlertDialog d = builder.create();
+                            d.show();
+                        }
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
 
         if(savedInstanceState != null){
             String timePicked = savedInstanceState.getString("timePicked");
+            String repetitionType = savedInstanceState.getString("repetitionType");
+            repetitionOptionsDaysChecked = savedInstanceState.getBooleanArray("repetitionDays");
             if(timePicked != null) time_picked.setText(timePicked);
+            if(repetitionType != null) repetition_picked.setText(repetitionType);
         }
     }
 
     private void saveAlarm(){
         String title = alarmTitle.getText().toString();
         String textTime = time_picked.getText().toString();
+        String repetitionType = repetition_picked.getText().toString();
+        String repetition;
         int hours = 0;
         int minute = 0;
         for (int i = 0; i < textTime.length(); i++) {
@@ -114,13 +207,23 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             return;
         }
 
+        if(repetitionType.equals(getResources().getString(R.string.no_repetition_option_selected))){
+            Toast.makeText(this, "Scegli una ripetizione", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if(!repetitionType.equals("Una sola volta") && !repetitionType.equals("Giornalmente")){
+            repetition = "Giorni della settimana";
+        }
+        else repetition = repetitionType;
+
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, hours);
         c.set(Calendar.MINUTE, minute);
         c.set(Calendar.SECOND, 0);
 
         if(!getIntent().hasExtra(AlarmFragment.EXTRA_ID)){
-            Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, true);
+            Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, true, repetition);
+            alarm.setRepetitionDays(repetitionOptionsDaysChecked);
             long alarmID = alarmViewModel.addAlarm(alarm);
             startAlarm(c, alarmID, alarm);
             Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
@@ -130,8 +233,9 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             if (id == -1)
                 Toast.makeText(this, "La sveglia non può essere modificata", Toast.LENGTH_SHORT).show();
             else {
-                Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, true);
+                Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, true, repetition);
                 alarm.setId(id);
+                alarm.setRepetitionDays(repetitionOptionsDaysChecked);
                 alarmViewModel.updateAlarm(alarm);
                 startAlarm(c, id, alarm);
                 Toast.makeText(this, "Sveglia modificata", Toast.LENGTH_SHORT).show();
@@ -182,15 +286,50 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         Intent intent = new Intent(this, AlertReceiver.class);
         intent.putExtra("Title", alarm.getTitle());
         intent.putExtra("AlarmID", alarmID);
+        intent.putExtra("Hours", alarm.getHours());
+        intent.putExtra("Minute", alarm.getMinute());
         intent.putExtra("Ringtone", alarm.isRingtone());
         intent.putExtra("Vibration", alarm.isVibration());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        intent.putExtra("Repetition", alarm.getRepetitionType());
+        String repetition = alarm.getRepetitionType();
+        if(repetition.equals("Una sola volta")){
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if(c.before(Calendar.getInstance())){
-            c.add(Calendar.DATE, 1);
+            if(c.before(Calendar.getInstance())){
+                c.add(Calendar.DATE, 1);
+            }
+
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
         }
+        if(repetition.equals("Giornalmente")){
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+            if(c.before(Calendar.getInstance())){
+                c.add(Calendar.DATE, 1);
+            }
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+        }
+        else {
+            for (int i = 0; i <= 6; i++) {
+                if(alarm.getRepetitionDays()[i]){
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6+i), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    if(i!=6) {
+                        c.set(Calendar.DAY_OF_WEEK, i+2);
+                    }
+                    else{
+                        c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                    }
+
+                    if(c.before(Calendar.getInstance())){
+                        c.add(Calendar.DATE, 7);
+                    }
+
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (AlarmManager.INTERVAL_DAY)*7,pendingIntent);
+                }
+            }
+        }
     }
 
     private void updateTimeText(int hours, int minute) {
@@ -205,7 +344,11 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         String timePicked = time_picked.getText().toString();
+        String repetitionType = repetition_picked.getText().toString();
+        boolean[] repetitionDays = repetitionOptionsDaysChecked;
         outState.putString("timePicked", timePicked);
+        outState.putString("repetitionType", repetitionType);
+        outState.putBooleanArray("repetitionDays", repetitionDays);
         super.onSaveInstanceState(outState);
     }
 }

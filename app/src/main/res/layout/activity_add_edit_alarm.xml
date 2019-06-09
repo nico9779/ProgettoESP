@@ -49,6 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/title_layout">
 
+
         <TextView
             android:id="@+id/time_label"
             android:layout_width="wrap_content"
@@ -71,10 +72,37 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/ringtone_layout"
+        android:id="@+id/repetition_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/time_layout">
+
+        <TextView
+            android:id="@+id/repetition_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_margin="10dp"
+            android:textColor="@color/nero"
+            android:text="@string/alarm_repetition_label" />
+
+        <TextView
+            android:id="@+id/repetition_picked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="@string/no_repetition_option_selected"
+            android:layout_toEndOf="@id/repetition_label"
+            android:layout_alignBaseline="@id/repetition_label"
+            android:textColor="@color/nero" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/ringtone_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/repetition_layout">
 
         <TextView
             android:id="@+id/ringtone_label"

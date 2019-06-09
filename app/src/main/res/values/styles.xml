@@ -9,7 +9,7 @@
         <item name="actionOverflowButtonStyle">@style/OverflowMenuStyle</item>
     </style>
 
-    <!-- Tema dello Switch -->
+    <!-- Stile dello switch -->
     <style name="ColorSwitch" parent="Theme.AppCompat.Light">
         <item name="colorControlActivated">@color/colorPrimary</item>
         <item name="colorSwitchThumbNormal">@color/disable_thumb_grey</item>
@@ -24,6 +24,11 @@
     <!-- Stile della EditText -->
     <style name="EditTextHintLabel" parent="TextAppearance.Design.Hint">
         <item name="android:textSize">20sp</item>
+    </style>
+
+    <!-- Stile dell'AlertDialog -->
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:colorAccent">@color/colorPrimary</item>
     </style>
 
 </resources>
