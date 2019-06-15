@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityAddEditAlarm">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/add_alarm_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/AppTheme"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="Aggiungi una sveglia"
+        app:titleTextColor="@color/bianco" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_below="@id/add_alarm_toolbar"
+        android:baselineAligned="false">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight=".5">
+
+            <RelativeLayout
+                android:id="@+id/title_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    app:hintTextAppearance="@style/EditTextHintLabel">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/alarm_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/alarm_title_label"
+                        android:inputType="textCapSentences"
+                        android:textSize="30sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/time_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/title_layout"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/time_picked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:onClick="setTime"
+                    android:text="10:30"
+                    android:textColor="@color/nero"
+                    android:textSize="75sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:background="#c5c5c5" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight=".5">
+
+
+            <TextView
+                android:id="@+id/details_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="49dp"
+                android:layout_marginTop="32.5dp"
+                android:text="@string/details_label"
+                android:textColor="@color/grigioScuro"
+                android:textSize="25sp" />
+
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/details_label"
+                android:layout_marginTop="10dp">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <View
+                        android:id="@+id/view1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="#c5c5c5" />
+
+                    <RelativeLayout
+                        android:id="@+id/repetition_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/view1"
+                        android:layout_margin="10dp">
+
+                        <ImageView
+                            android:id="@+id/repeat_img"
+                            android:layout_width="wrap_content"
+                            android:layout_height="34dp"
+                            android:src="@drawable/ic_repeat" />
+
+                        <TextView
+                            android:id="@+id/repetition_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_toEndOf="@id/repeat_img"
+                            android:text="@string/alarm_repetition_label"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="25sp"
+                            android:textStyle="italic" />
+
+                        <TextView
+                            android:id="@+id/repetition_picked"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/repetition_label"
+                            android:layout_alignStart="@id/repetition_label"
+                            android:layout_marginTop="10dp"
+                            android:layout_toStartOf="@id/arrow_img"
+                            android:text="@string/no_repetition_option_selected"
+                            android:textColor="@color/nero"
+                            android:textSize="25sp" />
+
+                        <ImageView
+                            android:id="@+id/arrow_img"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_keyboard_arrow_right" />
+
+                    </RelativeLayout>
+
+                    <View
+                        android:id="@+id/view2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/repetition_layout"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="#c5c5c5" />
+
+                    <RelativeLayout
+                        android:id="@+id/ringtone_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/view2"
+                        android:layout_margin="10dp">
+
+                        <ImageView
+                            android:id="@+id/ringtone_img"
+                            android:layout_width="wrap_content"
+                            android:layout_height="34dp"
+                            android:src="@drawable/ic_music_note" />
+
+                        <TextView
+                            android:id="@+id/ringtone_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_toEndOf="@id/ringtone_img"
+                            android:text="@string/ringtone_label"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="25sp"
+                            android:textStyle="italic" />
+
+                        <TextView
+                            android:id="@+id/ringtone_state"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/ringtone_label"
+                            android:layout_alignStart="@id/ringtone_label"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/off_label"
+                            android:textColor="@color/nero"
+                            android:textSize="30sp" />
+
+                        <android.support.v7.widget.SwitchCompat
+                            android:id="@+id/ringtone_switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="20dp"
+                            android:theme="@style/ColorSwitch" />
+
+                    </RelativeLayout>
+
+                    <View
+                        android:id="@+id/view3"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/ringtone_layout"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="#c5c5c5" />
+
+                    <RelativeLayout
+                        android:id="@+id/vibration_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/view3"
+                        android:layout_margin="10dp">
+
+                        <ImageView
+                            android:id="@+id/vibration_img"
+                            android:layout_width="wrap_content"
+                            android:layout_height="34dp"
+                            android:src="@drawable/ic_vibration" />
+
+                        <TextView
+                            android:id="@+id/vibration_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_toEndOf="@id/vibration_img"
+                            android:text="@string/vibrator_label"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="25sp"
+                            android:textStyle="italic" />
+
+                        <TextView
+                            android:id="@+id/vibration_state"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/vibration_label"
+                            android:layout_alignStart="@id/vibration_label"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/off_label"
+                            android:textColor="@color/nero"
+                            android:textSize="30sp" />
+
+                        <android.support.v7.widget.SwitchCompat
+                            android:id="@+id/vibration_switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="20dp"
+                            android:theme="@style/ColorSwitch" />
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+            </ScrollView>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

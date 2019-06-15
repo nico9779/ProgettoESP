@@ -7,6 +7,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionOverflowButtonStyle">@style/OverflowMenuStyle</item>
+        <item name="colorControlNormal">#c5c5c5</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="colorControlHighlight">@color/colorPrimary</item>
+        <item name="android:timePickerDialogTheme">@style/AlertDialogStyle</item>
     </style>
 
     <!-- Stile dello switch -->
@@ -23,12 +27,14 @@
 
     <!-- Stile della EditText -->
     <style name="EditTextHintLabel" parent="TextAppearance.Design.Hint">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
-    <!-- Stile dell'AlertDialog -->
+    <!-- Stile dell'AlertDialog e del TimePicker -->
     <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:colorAccent">@color/colorPrimary</item>
     </style>
+
 
 </resources>

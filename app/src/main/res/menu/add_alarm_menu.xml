@@ -9,11 +9,4 @@
         app:showAsAction="ifRoom"
         />
 
-    <item
-        android:id="@+id/cancel_alarm"
-        android:icon="@drawable/ic_close_white_24dp"
-        android:title="@string/event_cancel_alarm"
-        app:showAsAction="ifRoom"
-        />
-
 </menu>

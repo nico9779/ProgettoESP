@@ -18,10 +18,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ScheduleAlarmHelper {
 
     public static final int ADD_ALARM_REQUEST = 1;
     public static final String LOG_MAIN_ACTIVITY = "MainActivity";
@@ -142,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                     Alarm alarm = new Alarm(title, hours, minute, true,false, true, repetitionType);
                     alarm.setRepetitionDays(repetitionDays);
                     long alarmID = alarmViewModel.addAlarm(alarm);
-                    startAlarm(c, alarmID, alarm);
+                    scheduleAlarm(alarmID, alarm);
                     Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -159,7 +158,8 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
-    private void startAlarm(Calendar c, long alarmID, Alarm alarm){
+    @Override
+    public void scheduleAlarm(long alarmID, Alarm alarm){
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlertReceiver.class);
         intent.putExtra("Title", alarm.getTitle());
@@ -173,40 +173,55 @@ public class MainActivity extends AppCompatActivity {
         if(repetition.equals("Una sola volta")){
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            if(c.before(Calendar.getInstance())){
-                c.add(Calendar.DATE, 1);
+            Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
+
+            if(calendar.before(Calendar.getInstance())){
+                calendar.add(Calendar.DATE, 1);
             }
 
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }
         if(repetition.equals("Giornalmente")){
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            if(c.before(Calendar.getInstance())){
-                c.add(Calendar.DATE, 1);
+            Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
+
+            if(calendar.before(Calendar.getInstance())){
+                calendar.add(Calendar.DATE, 1);
             }
 
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
         }
         else {
             for (int i = 0; i <= 6; i++) {
                 if(alarm.getRepetitionDays()[i]){
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6+i), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+                    Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
+
                     if(i!=6) {
-                        c.set(Calendar.DAY_OF_WEEK, i+2);
+                        calendar.set(Calendar.DAY_OF_WEEK, i+2);
                     }
                     else{
-                        c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                     }
 
-                    if(c.before(Calendar.getInstance())){
-                        c.add(Calendar.DATE, 7);
+                    if(calendar.before(Calendar.getInstance())){
+                        calendar.add(Calendar.DATE, 7);
                     }
 
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (AlarmManager.INTERVAL_DAY)*7,pendingIntent);
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), (AlarmManager.INTERVAL_DAY)*7,pendingIntent);
                 }
             }
         }
+    }
+
+    @Override
+    public Calendar createCalendar(int hours, int minute) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hours);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+        return calendar;
     }
 }

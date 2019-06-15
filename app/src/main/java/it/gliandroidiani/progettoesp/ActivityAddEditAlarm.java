@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,7 +27,7 @@ import android.widget.Toast;
 import java.text.DateFormat;
 import java.util.Calendar;
 
-public class ActivityAddEditAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
+public class ActivityAddEditAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, ScheduleAlarmHelper {
 
     private AlarmViewModel alarmViewModel;
     Toolbar alarmToolbar;
@@ -40,6 +41,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
     RelativeLayout repetitionLayout;
     String[] repetitionOptions;
     String[] repetitionOptionsDays;
+    String[] repetitionOptionsDaysShort;
     boolean[] repetitionOptionsDaysChecked;
 
     @Override
@@ -58,13 +60,50 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
 
         repetitionOptions = getResources().getStringArray(R.array.repetition_options);
         repetitionOptionsDays = getResources().getStringArray(R.array.repetition_options_days);
+        repetitionOptionsDaysShort = getResources().getStringArray(R.array.repetition_options_days_short);
         repetitionOptionsDaysChecked = new boolean[repetitionOptionsDays.length];
 
         alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
 
         alarmToolbar = findViewById(R.id.add_alarm_toolbar);
+        alarmToolbar.setNavigationIcon(ContextCompat.getDrawable(this, R.drawable.ic_close_white_24dp));
         setSupportActionBar(alarmToolbar);
-
+        alarmToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(ActivityAddEditAlarm.this, R.style.AlertDialogStyle);
+                if(alarmToolbar.getTitle().equals("Aggiungi una sveglia")){
+                    builder.setTitle("Annulla sveglia");
+                    builder.setMessage("Sei sicuro di voler annullare questa sveglia?");
+                }
+                else if(alarmToolbar.getTitle().equals("Modifica sveglia")){
+                    builder.setTitle("Annulla modifica");
+                    builder.setMessage("Sei sicuro di voler annullare questa modifica?");
+                }
+                builder.setCancelable(false);
+                builder.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(alarmToolbar.getTitle().equals("Aggiungi una sveglia")){
+                            Toast.makeText(ActivityAddEditAlarm.this, R.string.event_cancel_alarm, Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                        else if(alarmToolbar.getTitle().equals("Modifica sveglia")){
+                            Toast.makeText(ActivityAddEditAlarm.this, "Modifica annullata", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                });
+                builder.setNeutralButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
 
         final Calendar c = Calendar.getInstance();
         int hours = c.get(Calendar.HOUR_OF_DAY);
@@ -110,7 +149,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
                 String item = "";
                 for (int i = 0; i < repetitionDays.length; i++) {
                     if(repetitionDays[i]){
-                        item = item + repetitionOptionsDays[i] + " ";
+                        item = item + repetitionOptionsDaysShort[i] + " ";
                     }
                 }
                 repetition_picked.setText(item);
@@ -148,16 +187,16 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
                                     String item = "";
                                     for (int i = 0; i < repetitionOptionsDaysChecked.length; i++) {
                                         if(repetitionOptionsDaysChecked[i]){
-                                            item = item + repetitionOptionsDays[i] + " ";
+                                            item = item + repetitionOptionsDaysShort[i] + " ";
                                         }
                                         else {
                                             isFalse = true;
                                         }
                                     }
-                                    if(isFalse && !item.equals("")) {
+                                    if(isFalse && !item.isEmpty()) {
                                         repetition_picked.setText(item);
                                     }
-                                    else if(item.equals("")){
+                                    else if(item.isEmpty()){
                                         repetition_picked.setText(R.string.no_repetition_option_selected);
                                     }
                                     else {
@@ -168,6 +207,13 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
                             AlertDialog d = builder.create();
                             d.show();
                         }
+                    }
+                });
+
+                builder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
                     }
                 });
 
@@ -216,16 +262,11 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         }
         else repetition = repetitionType;
 
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, hours);
-        c.set(Calendar.MINUTE, minute);
-        c.set(Calendar.SECOND, 0);
-
         if(!getIntent().hasExtra(AlarmFragment.EXTRA_ID)){
             Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, true, repetition);
             alarm.setRepetitionDays(repetitionOptionsDaysChecked);
             long alarmID = alarmViewModel.addAlarm(alarm);
-            startAlarm(c, alarmID, alarm);
+            scheduleAlarm(alarmID, alarm);
             Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
         }
         else {
@@ -233,11 +274,14 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             if (id == -1)
                 Toast.makeText(this, "La sveglia non può essere modificata", Toast.LENGTH_SHORT).show();
             else {
-                Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, true, repetition);
+                boolean active = getIntent().getBooleanExtra(AlarmFragment.EXTRA_ACTIVE, false);
+                Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, active, repetition);
                 alarm.setId(id);
                 alarm.setRepetitionDays(repetitionOptionsDaysChecked);
                 alarmViewModel.updateAlarm(alarm);
-                startAlarm(c, id, alarm);
+                if(active) {
+                    scheduleAlarm(id, alarm);
+                }
                 Toast.makeText(this, "Sveglia modificata", Toast.LENGTH_SHORT).show();
             }
         }
@@ -263,11 +307,6 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             saveAlarm();
             return true;
         }
-        else if(selected == R.id.cancel_alarm) {
-            Toast.makeText(this, R.string.event_cancel_alarm, Toast.LENGTH_SHORT).show();
-            finish();
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -281,7 +320,8 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         timePicker.show(getSupportFragmentManager(), "Time Picker");
     }
 
-    private void startAlarm(Calendar c, long alarmID, Alarm alarm){
+    @Override
+    public void scheduleAlarm(long alarmID, Alarm alarm){
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlertReceiver.class);
         intent.putExtra("Title", alarm.getTitle());
@@ -295,38 +335,44 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         if(repetition.equals("Una sola volta")){
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            if(c.before(Calendar.getInstance())){
-                c.add(Calendar.DATE, 1);
+            Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
+
+            if(calendar.before(Calendar.getInstance())){
+                calendar.add(Calendar.DATE, 1);
             }
 
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }
         if(repetition.equals("Giornalmente")){
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            if(c.before(Calendar.getInstance())){
-                c.add(Calendar.DATE, 1);
+            Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
+
+            if(calendar.before(Calendar.getInstance())){
+                calendar.add(Calendar.DATE, 1);
             }
 
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
         }
         else {
             for (int i = 0; i <= 6; i++) {
                 if(alarm.getRepetitionDays()[i]){
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6+i), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+                    Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
+
                     if(i!=6) {
-                        c.set(Calendar.DAY_OF_WEEK, i+2);
+                        calendar.set(Calendar.DAY_OF_WEEK, i+2);
                     }
                     else{
-                        c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                     }
 
-                    if(c.before(Calendar.getInstance())){
-                        c.add(Calendar.DATE, 7);
+                    if(calendar.before(Calendar.getInstance())){
+                        calendar.add(Calendar.DATE, 7);
                     }
 
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (AlarmManager.INTERVAL_DAY)*7,pendingIntent);
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), (AlarmManager.INTERVAL_DAY)*7,pendingIntent);
                 }
             }
         }
@@ -350,5 +396,13 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         outState.putString("repetitionType", repetitionType);
         outState.putBooleanArray("repetitionDays", repetitionDays);
         super.onSaveInstanceState(outState);
+    }
+
+    public Calendar createCalendar(int hours, int minute){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hours);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+        return calendar;
     }
 }

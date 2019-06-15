@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AlarmFragment extends Fragment {
+public class AlarmFragment extends Fragment implements ScheduleAlarmHelper {
 
     public static final int EDIT_ALARM_REQUEST = 2;
     public static final String EXTRA_ID = "it.gliandroidiani.progettoesp.EXTRA_ID";
@@ -44,6 +44,7 @@ public class AlarmFragment extends Fragment {
     public static final String EXTRA_MINUTE = "it.gliandroidiani.progettoesp.EXTRA_MINUTE";
     public static final String EXTRA_RINGTONE = "it.gliandroidiani.progettoesp.EXTRA_RINGTONE";
     public static final String EXTRA_VIBRATION = "it.gliandroidiani.progettoesp.EXTRA_VIBRATION";
+    public static final String EXTRA_ACTIVE = "it.gliandroidiani.progettoesp.EXTRA_ACTIVE";
     public static final String EXTRA_REPETITION_TYPE = "it.gliandroidiani.progettoesp.EXTRA_REPETITION_TYPE";
     public static final String EXTRA_REPETITION_DAYS = "it.gliandroidiani.progettoesp.EXTRA_REPETITION_DAYS";
 
@@ -77,10 +78,13 @@ public class AlarmFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<Alarm> alarms) {
                 adapter.setAlarms(alarms);
-                if(alarms.size() == 0)
+
+                if(alarms.size() == 0) {
                     noAlarmTextView.setVisibility(View.VISIBLE);
-                else
+                }
+                else {
                     noAlarmTextView.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -126,27 +130,28 @@ public class AlarmFragment extends Fragment {
                 intent.putExtra(EXTRA_MINUTE, alarm.getMinute());
                 intent.putExtra(EXTRA_RINGTONE, alarm.isRingtone());
                 intent.putExtra(EXTRA_VIBRATION, alarm.isVibration());
+                intent.putExtra(EXTRA_ACTIVE, alarm.isActive());
                 intent.putExtra(EXTRA_REPETITION_TYPE, alarm.getRepetitionType());
                 intent.putExtra(EXTRA_REPETITION_DAYS, alarm.getRepetitionDays());
                 startActivityForResult(intent, EDIT_ALARM_REQUEST);
             }
 
             @Override
-            public void onImageClick(Alarm alarm, int position) {
+            public void onImageClick(Alarm alarm) {
                 if(alarm.isActive()){
                     alarm.setActive(false);
-                    adapter.notifyItemChanged(position);
+                    alarmViewModel.updateAlarm(alarm);
                     cancelAlarm(alarm);
                     Toast.makeText(getActivity(), "Sveglia disattivata", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     alarm.setActive(true);
-                    adapter.notifyItemChanged(position);
+                    alarmViewModel.updateAlarm(alarm);
                     Calendar c = Calendar.getInstance();
                     c.set(Calendar.HOUR_OF_DAY, alarm.getHours());
                     c.set(Calendar.MINUTE, alarm.getMinute());
                     c.set(Calendar.SECOND, 0);
-                    startAlarm(c,alarm.getId(),alarm);
+                    scheduleAlarm(alarm.getId(),alarm);
                     Toast.makeText(getActivity(), "Sveglia riattivata", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -164,32 +169,39 @@ public class AlarmFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.delete_all_alarms) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
-            builder.setTitle("Elimina sveglie");
-            builder.setMessage("Sei sicuro di voler eliminare tutte le sveglie?");
-            builder.setCancelable(false);
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    alarmViewModel.deleteAllAlarms();
-                    cancelAllAlarm();
-                    Toast.makeText(getActivity(), R.string.deleted_all_alarms, Toast.LENGTH_SHORT).show();
-                }
-            });
-            builder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-            return true;
+            List<Alarm> alarms = alarmViewModel.getAllAlarms().getValue();
+            if(!alarms.isEmpty()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
+                builder.setTitle("Elimina sveglie");
+                builder.setMessage("Sei sicuro di voler eliminare tutte le sveglie?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        alarmViewModel.deleteAllAlarms();
+                        cancelAllAlarm();
+                        Toast.makeText(getActivity(), R.string.deleted_all_alarms, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
+            }
+            else {
+                Toast.makeText(getActivity(), "Nessuna sveglia da eliminare", Toast.LENGTH_SHORT).show();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void startAlarm(Calendar c, long alarmID, Alarm alarm){
+    @Override
+    public void scheduleAlarm(long alarmID, Alarm alarm){
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(getActivity(), AlertReceiver.class);
         intent.putExtra("Title", alarm.getTitle());
@@ -203,38 +215,44 @@ public class AlarmFragment extends Fragment {
         if(repetition.equals("Una sola volta")){
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            if(c.before(Calendar.getInstance())){
-                c.add(Calendar.DATE, 1);
+            Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
+
+            if(calendar.before(Calendar.getInstance())){
+                calendar.add(Calendar.DATE, 1);
             }
 
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }
         if(repetition.equals("Giornalmente")){
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            if(c.before(Calendar.getInstance())){
-                c.add(Calendar.DATE, 1);
+            Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
+
+            if(calendar.before(Calendar.getInstance())){
+                calendar.add(Calendar.DATE, 1);
             }
 
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
         }
         else {
             for (int i = 0; i <= 6; i++) {
                 if(alarm.getRepetitionDays()[i]){
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) (alarmID*6+i), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+                    Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
+
                     if(i!=6) {
-                        c.set(Calendar.DAY_OF_WEEK, i+2);
+                        calendar.set(Calendar.DAY_OF_WEEK, i+2);
                     }
                     else{
-                        c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                     }
 
-                    if(c.before(Calendar.getInstance())){
-                        c.add(Calendar.DATE, 7);
+                    if(calendar.before(Calendar.getInstance())){
+                        calendar.add(Calendar.DATE, 7);
                     }
 
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (AlarmManager.INTERVAL_DAY)*7,pendingIntent);
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), (AlarmManager.INTERVAL_DAY)*7,pendingIntent);
                 }
             }
         }
@@ -276,5 +294,14 @@ public class AlarmFragment extends Fragment {
                 }
             }
         }
+    }
+
+    @Override
+    public Calendar createCalendar(int hours, int minute) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hours);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+        return calendar;
     }
 }

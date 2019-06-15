@@ -4,7 +4,16 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import java.util.List;
+/*
+Questa classe descrive l'entità allarme che appartiene al database.
+I parametri che descrivono una sveglia sono il suo id che viene generato automaticamente,
+il titolo, l'ora suddivisa in ore e minuti, la presenza o meno della suoneria e della vibrazione
+rappresentati da un valore booleano, il valore booleano active che descrive se la sveglia è attiva
+oppure no (se attiva allora significa che può squillare), una stringa che descrive il tipo di ripetizione
+adottato ("Una sola volta", "Giornalmente", "Giorni della settimana") e infine un vettore di booleani
+che rappresentano i giorni in cui la sveglia deve squillare nel caso in cui la ripetizione scelta sia
+"Giorni della settimana"
+ */
 
 @Entity(tableName = "alarm_table")
 public class Alarm {
@@ -18,6 +27,8 @@ public class Alarm {
         this.active = active;
         this.repetitionType = repetitionType;
     }
+
+    //Parametri entità allarme
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -46,6 +57,8 @@ public class Alarm {
 
     @ColumnInfo(name = "repetition_days")
     private boolean[] repetitionDays;
+
+    //Metodi Getter and Setter
 
     public long getId() {
         return id;

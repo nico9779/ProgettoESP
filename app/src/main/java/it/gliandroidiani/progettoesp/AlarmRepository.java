@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -19,6 +20,19 @@ public class AlarmRepository {
 
     public LiveData<List<Alarm>> getAllAlarms(){
         return allAlarms;
+    }
+
+    public List<Alarm> getListAlarms() {
+        GetListAlarmsAsyncTask asyncTask = new GetListAlarmsAsyncTask(alarmDao);
+        List<Alarm> alarms = new ArrayList<>();
+        try {
+            alarms = asyncTask.execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return alarms;
     }
 
     public void deleteAllAlarms(){
@@ -72,6 +86,20 @@ public class AlarmRepository {
         @Override
         protected Long doInBackground(Alarm... alarms) {
             return alarmDao.addAlarm(alarms[0]);
+        }
+    }
+
+    private static class GetListAlarmsAsyncTask extends AsyncTask<Void, Void, List<Alarm>>{
+
+        private AlarmDao alarmDao;
+
+        private GetListAlarmsAsyncTask(AlarmDao alarmDao){
+            this.alarmDao = alarmDao;
+        }
+
+        @Override
+        protected List<Alarm> doInBackground(Void... voids) {
+            return alarmDao.getListAlarms();
         }
     }
 
