@@ -20,7 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity implements ScheduleAlarmHelper {
+public class MainActivity extends AppCompatActivity {
 
     public static final int ADD_ALARM_REQUEST = 1;
     public static final String LOG_MAIN_ACTIVITY = "MainActivity";
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements ScheduleAlarmHelp
                     Alarm alarm = new Alarm(title, hours, minute, true,false, true, repetitionType);
                     alarm.setRepetitionDays(repetitionDays);
                     long alarmID = alarmViewModel.addAlarm(alarm);
-                    scheduleAlarm(alarmID, alarm);
+                    ScheduleAlarmHelper.scheduleAlarm(this, alarmID, alarm);
                     Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -156,72 +156,5 @@ public class MainActivity extends AppCompatActivity implements ScheduleAlarmHelp
         int item_selected = navigationView.getSelectedItemId();
         outState.putInt("item_selected", item_selected);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void scheduleAlarm(long alarmID, Alarm alarm){
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlertReceiver.class);
-        intent.putExtra("Title", alarm.getTitle());
-        intent.putExtra("AlarmID", alarmID);
-        intent.putExtra("Hours", alarm.getHours());
-        intent.putExtra("Minute", alarm.getMinute());
-        intent.putExtra("Ringtone", alarm.isRingtone());
-        intent.putExtra("Vibration", alarm.isVibration());
-        intent.putExtra("Repetition", alarm.getRepetitionType());
-        String repetition = alarm.getRepetitionType();
-        if(repetition.equals("Una sola volta")){
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
-
-            if(calendar.before(Calendar.getInstance())){
-                calendar.add(Calendar.DATE, 1);
-            }
-
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        }
-        if(repetition.equals("Giornalmente")){
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
-
-            if(calendar.before(Calendar.getInstance())){
-                calendar.add(Calendar.DATE, 1);
-            }
-
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
-        }
-        else {
-            for (int i = 0; i <= 6; i++) {
-                if(alarm.getRepetitionDays()[i]){
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6+i), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
-
-                    if(i!=6) {
-                        calendar.set(Calendar.DAY_OF_WEEK, i+2);
-                    }
-                    else{
-                        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-                    }
-
-                    if(calendar.before(Calendar.getInstance())){
-                        calendar.add(Calendar.DATE, 7);
-                    }
-
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), (AlarmManager.INTERVAL_DAY)*7,pendingIntent);
-                }
-            }
-        }
-    }
-
-    @Override
-    public Calendar createCalendar(int hours, int minute) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hours);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
-        return calendar;
     }
 }

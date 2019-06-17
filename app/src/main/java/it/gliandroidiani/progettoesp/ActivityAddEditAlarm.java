@@ -1,10 +1,7 @@
 package it.gliandroidiani.progettoesp;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
@@ -27,7 +24,7 @@ import android.widget.Toast;
 import java.text.DateFormat;
 import java.util.Calendar;
 
-public class ActivityAddEditAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, ScheduleAlarmHelper {
+public class ActivityAddEditAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener{
 
     private AlarmViewModel alarmViewModel;
     Toolbar alarmToolbar;
@@ -238,13 +235,26 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         String repetition;
         int hours = 0;
         int minute = 0;
-        for (int i = 0; i < textTime.length(); i++) {
-            if(textTime.charAt(i) == ':'){
-                hours = Integer.valueOf(textTime.substring(0,i));
-                minute = Integer.valueOf(textTime.substring(i+1));
-                break;
+        String timeFormat = textTime.substring(textTime.length()-2);
+        if(timeFormat.equals("AM") || timeFormat.equals("PM")){
+            for (int i = 0; i < textTime.length(); i++) {
+                if(textTime.charAt(i) == ':'){
+                    if(timeFormat.equals("PM")) {
+                        hours = Integer.parseInt(textTime.substring(0, i))+12;
+                    }
+                    else {
+                        hours = Integer.parseInt(textTime.substring(0, i));
+                    }
+                    minute = Integer.parseInt(textTime.substring(i + 1, i + 3));
+                    break;
+                }
             }
         }
+        else {
+            hours = Integer.parseInt(textTime.substring(0,2));
+            minute = Integer.parseInt(textTime.substring(3,5));
+        }
+
         boolean ringtone = ringtone_switch.isChecked();
         boolean vibration = vibration_switch.isChecked();
 
@@ -266,7 +276,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, true, repetition);
             alarm.setRepetitionDays(repetitionOptionsDaysChecked);
             long alarmID = alarmViewModel.addAlarm(alarm);
-            scheduleAlarm(alarmID, alarm);
+            ScheduleAlarmHelper.scheduleAlarm(this, alarmID, alarm);
             Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
         }
         else {
@@ -280,7 +290,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
                 alarm.setRepetitionDays(repetitionOptionsDaysChecked);
                 alarmViewModel.updateAlarm(alarm);
                 if(active) {
-                    scheduleAlarm(id, alarm);
+                    ScheduleAlarmHelper.scheduleAlarm(this, id, alarm);
                 }
                 Toast.makeText(this, "Sveglia modificata", Toast.LENGTH_SHORT).show();
             }
@@ -320,64 +330,6 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         timePicker.show(getSupportFragmentManager(), "Time Picker");
     }
 
-    @Override
-    public void scheduleAlarm(long alarmID, Alarm alarm){
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlertReceiver.class);
-        intent.putExtra("Title", alarm.getTitle());
-        intent.putExtra("AlarmID", alarmID);
-        intent.putExtra("Hours", alarm.getHours());
-        intent.putExtra("Minute", alarm.getMinute());
-        intent.putExtra("Ringtone", alarm.isRingtone());
-        intent.putExtra("Vibration", alarm.isVibration());
-        intent.putExtra("Repetition", alarm.getRepetitionType());
-        String repetition = alarm.getRepetitionType();
-        if(repetition.equals("Una sola volta")){
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
-
-            if(calendar.before(Calendar.getInstance())){
-                calendar.add(Calendar.DATE, 1);
-            }
-
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        }
-        if(repetition.equals("Giornalmente")){
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
-
-            if(calendar.before(Calendar.getInstance())){
-                calendar.add(Calendar.DATE, 1);
-            }
-
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
-        }
-        else {
-            for (int i = 0; i <= 6; i++) {
-                if(alarm.getRepetitionDays()[i]){
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) (alarmID*6+i), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
-
-                    if(i!=6) {
-                        calendar.set(Calendar.DAY_OF_WEEK, i+2);
-                    }
-                    else{
-                        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-                    }
-
-                    if(calendar.before(Calendar.getInstance())){
-                        calendar.add(Calendar.DATE, 7);
-                    }
-
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), (AlarmManager.INTERVAL_DAY)*7,pendingIntent);
-                }
-            }
-        }
-    }
-
     private void updateTimeText(int hours, int minute) {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, hours);
@@ -396,13 +348,5 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         outState.putString("repetitionType", repetitionType);
         outState.putBooleanArray("repetitionDays", repetitionDays);
         super.onSaveInstanceState(outState);
-    }
-
-    public Calendar createCalendar(int hours, int minute){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hours);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
-        return calendar;
     }
 }
