@@ -8,6 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+/*
+Questa classe si interpone tra il dao e viewmodel e implementa tutti i metodi del database che
+poi vengono utilizzati nella classe AlarmViewModel che estende ViewModel.
+Il metodo del dao che restituisce i livedata (getAllAlarms) non ha bisogno di essere implementato
+in quanto room fornisce a sua volta un'implementazione che viene eseguita in background.
+Gli altri metodi devono essere implementati in modo che vengano eseguiti in background usando
+la classe AsyncTask perchè Room non ammette l'esecuzioni di query nel main thread.
+ */
+
 public class AlarmRepository {
     private AlarmDao alarmDao;
     private LiveData<List<Alarm>> allAlarms;
@@ -18,10 +27,16 @@ public class AlarmRepository {
         allAlarms = alarmDao.getAllAlarms();
     }
 
+    //Metodo che restituisce i livedata
     public LiveData<List<Alarm>> getAllAlarms(){
         return allAlarms;
     }
 
+    /*
+    Metodo che restituisce direttamente la lista di sveglie.
+    Utilizza il metodo get della classe AsyncTask opportunamente gestito in presenza di eccezioni
+    che permette di recuperare i dati processati e restituiti all'interno del metodo doInBackground.
+     */
     public List<Alarm> getListAlarms() {
         GetListAlarmsAsyncTask asyncTask = new GetListAlarmsAsyncTask(alarmDao);
         List<Alarm> alarms = new ArrayList<>();
@@ -35,10 +50,15 @@ public class AlarmRepository {
         return alarms;
     }
 
+    //Metodo per cancellare tutte le sveglie nel database
     public void deleteAllAlarms(){
         new DeleteAllAlarmsAsyncTask(alarmDao).execute();
     }
 
+    /*
+    Metodo che aggiunge una sveglia nel database.
+    Il metodo get viene utilizzato per ottenere l'ID della sveglia appena inserita.
+     */
     public long addAlarm(Alarm alarm) {
         AddAlarmAsyncTask asyncTask = new AddAlarmAsyncTask(alarmDao);
         long id_alarm = 0;
@@ -52,13 +72,20 @@ public class AlarmRepository {
         return id_alarm;
     }
 
+    //Metodo per aggiornare una sveglia
     public void updateAlarm(Alarm alarm){
         new UpdateAlarmAsyncTask(alarmDao).execute(alarm);
     }
 
+    //Metodo per eliminare una sveglia
     public void deleteAlarm(Alarm alarm){
         new DeleteAlarmAsyncTask(alarmDao).execute(alarm);
     }
+
+    /*
+    Qui di seguito sono riportate tutte le classi che estendono AsyncTask e eseguono le query
+    del dao in background.
+     */
 
     private static class DeleteAllAlarmsAsyncTask extends AsyncTask<Void, Void, Void>{
 

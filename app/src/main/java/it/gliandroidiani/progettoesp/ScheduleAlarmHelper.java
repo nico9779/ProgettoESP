@@ -8,8 +8,29 @@ import android.content.Intent;
 import java.util.Calendar;
 import java.util.List;
 
+/*
+Questa classe contiene solamente metodi statici e serve a schedulare e cancellare
+gli allarmi in base al tempo selezionato nel momento della creazione della sveglia
+e al tipo di ripetizione scelto
+ */
+
 public class ScheduleAlarmHelper {
 
+
+    /*
+    Metodo che serve alla schedulazione di un'allarme per una data sveglia.
+    L'intent che viene creato contiene tutte le informazioni riguardante a una data sveglia che
+    servono alla creazione delle notifiche.
+    Il tipo di allarmi che vengono impostate in questo metodo dipendono dal tipo di ripetizione
+    che presenta la sveglia.
+    I pendingintent hanno bisogno di un requestcode che deve essere unico.
+    Questo viene risolto associando a tutti i pendingintent un codice che è pari all'alarmID*6
+    in modo tale che per ogni sveglia che imposto ci sia spazio per 6 possibili pendingintent.
+    Tutti questi pendingintent potrebbero essere riempiti nel caso in cui la ripetizione coinvolga
+    esattamente 6 giorni della settimana.
+    Nei casi in cui la ripetizione sia del tipo "Una sola volta" o "Giornalmente" i pendingintent usati
+    saranno solamente uno.
+     */
     public static void scheduleAlarm(Context context, long alarmID, Alarm alarm){
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlertReceiver.class);
@@ -26,6 +47,9 @@ public class ScheduleAlarmHelper {
 
             Calendar calendar = createCalendar(alarm.getHours(), alarm.getMinute());
 
+            /*Nel caso in cui imposto una sveglia che presenta un'orario precedente a quello attuale
+              evito che venga triggerata subito aggiungendo al calendario un giorno in più a quello attuale
+             */
             if(calendar.before(Calendar.getInstance())){
                 calendar.add(Calendar.DATE, 1);
             }
@@ -67,6 +91,8 @@ public class ScheduleAlarmHelper {
         }
     }
 
+
+    //Metodo per cancellare gli allarmi associati a una data sveglia
     public static void cancelAlarm(Context context, Alarm alarm) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlertReceiver.class);
@@ -85,6 +111,7 @@ public class ScheduleAlarmHelper {
         }
     }
 
+    //Metodo per cancellare tutti gli allarmi associati a tutte le sveglie presenti nel database
     public static void cancelAllAlarm(Context context, AlarmViewModel alarmViewModel) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlertReceiver.class);
@@ -105,6 +132,7 @@ public class ScheduleAlarmHelper {
         }
     }
 
+    //Metodo di supporto che permette di creare un calendario con una data ora e minuti
     private static Calendar createCalendar(int hours, int minute){
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hours);

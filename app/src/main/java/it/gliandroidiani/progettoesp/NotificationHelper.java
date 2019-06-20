@@ -15,8 +15,17 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 
+/*
+Questa classe è di aiuto per la costruzione delle notifiche che vengono visualizzate ogni volta
+che scatta un'allarme.
+ */
+
 public class NotificationHelper extends ContextWrapper {
 
+    /*ID e nomi dei due canali utilizzati per costruire le notifiche.
+      Uno è utilizzato nel caso l'utente richieda l'uso della suoneria e
+      l'altro viceversa.
+    */
     public static final String CHANNEL_ID_RINGTONE = "channelID_RINGTONE";
     public static final String CHANNEL_ID_NO_RINGTONE = "channelID_NO_RINGTONE";
     public static final String CHANNEL_NAME_RINGTONE = "progettoesp_RINGTONE";
@@ -31,6 +40,7 @@ public class NotificationHelper extends ContextWrapper {
         }
     }
 
+    //Metodo che costruisce i due canali
     @TargetApi(Build.VERSION_CODES.O)
     public void createChannels() {
         NotificationChannel channelRingtone = new NotificationChannel(CHANNEL_ID_RINGTONE, CHANNEL_NAME_RINGTONE, NotificationManager.IMPORTANCE_HIGH);
@@ -56,20 +66,23 @@ public class NotificationHelper extends ContextWrapper {
         return mManager;
     }
 
+    //Questo metodo serve a costruire la notifica
     public NotificationCompat.Builder getChannelNotification(String title, long alarmID, boolean ringtone, boolean vibration){
 
+        //Intent che serve ad accedere all'activity principale quando una notifica viene cliccata
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (ringtone)
-                builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_RINGTONE);
-            else
-                builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_NO_RINGTONE);
-        }
-        else {
-            builder = new NotificationCompat.Builder(getApplicationContext());
+        /*Nel caso sia presente o meno la suoneria uso il canale corretto per la creazione della notifica.
+          Nel caso in cui l'sdk version del dispositivo sia inferiore a oreo utilizzo i metodi
+          appropriati per l'impostazione della suoneria.
+         */
+        if (ringtone)
+            builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_RINGTONE);
+        else
+            builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_NO_RINGTONE);
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             builder.setVibrate(null);
             if(ringtone) {
                 builder.setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.alarmclocksound));
@@ -81,6 +94,10 @@ public class NotificationHelper extends ContextWrapper {
                 .setSmallIcon(R.drawable.ic_alarm_black_24dp)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent);
+        /*
+        Questo if mi permette di impostare la vibrazione nel caso sia richiesta e utilizzando un pattern
+        di questo tipo: 2 secondi di vibrazione e 2 secondi di pausa per un totale di 10 secondi.
+         */
         if(vibration) {
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

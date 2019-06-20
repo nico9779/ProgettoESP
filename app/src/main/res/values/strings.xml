@@ -21,6 +21,22 @@
     <string name="no_repetition_option_selected">Nessuna opzione</string>
     <string name="repetition_label">Ripetizione</string>
     <string name="details_label">Dettagli</string>
+    <string name="insert_title">Inserisci un titolo</string>
+    <string name="choose_repetition">Scegli una ripetizione</string>
+    <string name="event_edit_alarm">Sveglia modificata</string>
+    <string name="impossible_edit_alarm">La sveglia non può essere modificata</string>
+    <string name="add_alarm">Aggiungi una sveglia</string>
+    <string name="cancel_alarm">Annulla sveglia</string>
+    <string name="edit_alarm">Modifica sveglia</string>
+    <string name="cancel_edit_alarm">Annulla modifica</string>
+    <string name="message_cancel_alarm">Sei sicuro di voler annullare questa sveglia?</string>
+    <string name="message_cancel_edit_alarm">Sei sicuro di voler annullare questa modifica?</string>
+    <string name="yes_label">SI</string>
+    <string name="no_label">NO</string>
+    <string name="cancel_edit_alarm_toast">Modifica annullata</string>
+    <string name="select_option">Scegli un\'opzione</string>
+    <string name="ok_label">OK</string>
+    <string name="cancel_label">ANNULLA</string>
     <string-array name="repetition_options" >
         <item>Una sola volta</item>
         <item>Giornalmente</item>

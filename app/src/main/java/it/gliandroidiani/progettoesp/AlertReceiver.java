@@ -6,10 +6,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
+/*
+Questa classe estende BroadcastReceiver e il metodo onReceive viene eseguito ogni volta che scatta
+un'allarme.
+ */
+
 public class AlertReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        //Estraggo tutte le informazioni della sveglia dall'intent che ha triggerato il mio receiver
         String title = intent.getStringExtra("Title");
         long alarmID = intent.getLongExtra("AlarmID", 0);
         int hours = intent.getIntExtra("Hours", 0);
@@ -17,9 +23,15 @@ public class AlertReceiver extends BroadcastReceiver {
         boolean ringtone = intent.getBooleanExtra("Ringtone", false);
         boolean vibration = intent.getBooleanExtra("Vibration", false);
         String repetition = intent.getStringExtra("Repetition");
+        //Creo la notifica da visualizzare con la classe di supporto NotificationHelper
         NotificationHelper notificationHelper = new NotificationHelper(context);
         NotificationCompat.Builder nb = notificationHelper.getChannelNotification(title, alarmID, ringtone, vibration);
         notificationHelper.getManager().notify((int) alarmID, nb.build());
+        /*
+        Nel caso in cui la sveglia deva squillare una sola volta viene aggiornata creando una nuova
+        sveglia che contiene le stesse informazioni e inoltre lo stato della sveglia viene impostato
+        automaticamente a false.
+         */
         if(repetition.equals("Una sola volta")){
             AlarmRepository alarmRepository = new AlarmRepository((Application) context.getApplicationContext());
             Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, false, repetition);

@@ -2,6 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- Menu che compare nella toolbar del fragment
+     "AlarmFragment" -->
+
     <item
         android:id="@+id/delete_all_alarms"
         android:icon="@drawable/ic_more_vert_white_24dp"

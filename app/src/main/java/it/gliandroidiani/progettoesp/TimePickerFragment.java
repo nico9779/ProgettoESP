@@ -10,6 +10,11 @@ import android.text.format.DateFormat;
 
 import java.util.Calendar;
 
+/*
+Questa classe serve a creare il fragment contenente il timepicker che
+serve a selezionare l'ora per impostare una sveglia
+ */
+
 public class TimePickerFragment extends DialogFragment {
     @NonNull
     @Override

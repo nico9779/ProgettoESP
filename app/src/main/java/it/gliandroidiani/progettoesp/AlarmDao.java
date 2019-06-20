@@ -20,6 +20,11 @@ public interface AlarmDao {
     @Query("SELECT * FROM alarm_table")
     LiveData<List<Alarm>> getAllAlarms();
 
+    /*
+    Metodo equivalente a quello sopra ma che invece restituisce direttamente
+    la lista degli allarmi nel database anzichè i livedata.
+    Viene usato per reimpostare le sveglie nel caso del riavvio del dispositivo
+     */
     @Query("SELECT * FROM alarm_table")
     List<Alarm> getListAlarms();
 
@@ -27,7 +32,9 @@ public interface AlarmDao {
     @Query("DELETE FROM alarm_table")
     void deleteAllAlarms();
 
-    //Inserimento sveglia
+    /*Inserimento sveglia
+      Restituisce un long ovvero l'ID della sveglia inserita.
+     */
     @Insert
     long addAlarm(Alarm alarm);
 

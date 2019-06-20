@@ -2,6 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- Menu che compare nella toolbar dell'activity
+     "ActivityAddEditAlarm" -->
     <item
         android:id="@+id/save_alarm"
         android:icon="@drawable/ic_done_white_24dp"
