@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Calendar;
 import java.util.List;
 
 
@@ -34,6 +33,10 @@ import java.util.List;
  */
 public class AlarmFragment extends Fragment {
 
+    /*
+    Stringhe utilizzate dall'intent per aggiungere gli extra da trasmettere all'activity AddEditAlarm
+    nel caso in cui venga modificata una sveglia
+    */
     public static final int EDIT_ALARM_REQUEST = 2;
     public static final String EXTRA_ID = "it.gliandroidiani.progettoesp.EXTRA_ID";
     public static final String EXTRA_TITLE = "it.gliandroidiani.progettoesp.EXTRA_TITLE";
@@ -45,9 +48,9 @@ public class AlarmFragment extends Fragment {
     public static final String EXTRA_REPETITION_TYPE = "it.gliandroidiani.progettoesp.EXTRA_REPETITION_TYPE";
     public static final String EXTRA_REPETITION_DAYS = "it.gliandroidiani.progettoesp.EXTRA_REPETITION_DAYS";
 
+    //Variabili private
     private AlarmViewModel alarmViewModel;
-    TextView noAlarmTextView;
-    Toolbar alarmToolbar;
+    private TextView noAlarmTextView;
 
     public AlarmFragment() {
         // Required empty public constructor
@@ -59,10 +62,12 @@ public class AlarmFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_alarm, container, false);
 
         noAlarmTextView = view.findViewById(R.id.starting_string_alarm);
-        alarmToolbar = view.findViewById(R.id.alarm_toolbar);
+        //Imposto la toolbar e indico la presenza del menu
+        Toolbar alarmToolbar = view.findViewById(R.id.alarm_toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(alarmToolbar);
         setHasOptionsMenu(true);
 
+        //Dichiaro il recyclerView e imposto l'adapter
         RecyclerView recyclerView = view.findViewById(R.id.alarm_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
@@ -94,10 +99,10 @@ public class AlarmFragment extends Fragment {
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int i) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
-                builder.setTitle("Elimina sveglia");
-                builder.setMessage("Sei sicuro di voler eliminare questa sveglia?");
+                builder.setTitle(getResources().getString(R.string.delete_alarm));
+                builder.setMessage(getResources().getString(R.string.message_delete_alarm));
                 builder.setCancelable(false);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getResources().getString(R.string.ok_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Alarm alarm = adapter.getAlarmAt(viewHolder.getAdapterPosition());
@@ -106,7 +111,7 @@ public class AlarmFragment extends Fragment {
                         Toast.makeText(getActivity(), R.string.event_delete_alarm, Toast.LENGTH_SHORT).show();
                     }
                 });
-                builder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
+                builder.setNeutralButton(getResources().getString(R.string.cancel_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         adapter.notifyItemChanged(viewHolder.getAdapterPosition());
@@ -139,17 +144,13 @@ public class AlarmFragment extends Fragment {
                     alarm.setActive(false);
                     alarmViewModel.updateAlarm(alarm);
                     ScheduleAlarmHelper.cancelAlarm(getActivity(), alarm);
-                    Toast.makeText(getActivity(), "Sveglia disattivata", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.inactive_alarm, Toast.LENGTH_SHORT).show();
                 }
                 else {
                     alarm.setActive(true);
                     alarmViewModel.updateAlarm(alarm);
-                    Calendar c = Calendar.getInstance();
-                    c.set(Calendar.HOUR_OF_DAY, alarm.getHours());
-                    c.set(Calendar.MINUTE, alarm.getMinute());
-                    c.set(Calendar.SECOND, 0);
                     ScheduleAlarmHelper.scheduleAlarm(getActivity(), alarm.getId(),alarm);
-                    Toast.makeText(getActivity(), "Sveglia riattivata", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.active_alarm, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -157,22 +158,29 @@ public class AlarmFragment extends Fragment {
         return view;
     }
 
+    //Metodo che aggiunge il menu alla toolbar
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_alarm_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    /* Metodo che mi permette di stabilire cosa fare quando clicco
+    su un'icona del menu della toolbar */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.delete_all_alarms) {
             List<Alarm> alarms = alarmViewModel.getAllAlarms().getValue();
+            /*
+            Nel caso in cui ci siano delle sveglie salvate nel database creo una finestra di
+            conferma di cancellazione di tutte le sveglie e disattivo gli allarmi
+             */
             if(!alarms.isEmpty()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
-                builder.setTitle("Elimina sveglie");
-                builder.setMessage("Sei sicuro di voler eliminare tutte le sveglie?");
+                builder.setTitle(getResources().getString(R.string.delete_alarms));
+                builder.setMessage(getResources().getString(R.string.message_delete_all_alarms));
                 builder.setCancelable(false);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getResources().getString(R.string.ok_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         alarmViewModel.deleteAllAlarms();
@@ -180,7 +188,7 @@ public class AlarmFragment extends Fragment {
                         Toast.makeText(getActivity(), R.string.deleted_all_alarms, Toast.LENGTH_SHORT).show();
                     }
                 });
-                builder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
+                builder.setNeutralButton(getResources().getString(R.string.cancel_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -190,8 +198,9 @@ public class AlarmFragment extends Fragment {
                 dialog.show();
                 return true;
             }
+            //Altrimenti mostro un toast che dichiara l'assenza di sveglie nel database
             else {
-                Toast.makeText(getActivity(), "Nessuna sveglia da eliminare", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.no_alarms_to_delete, Toast.LENGTH_SHORT).show();
             }
         }
         return super.onOptionsItemSelected(item);

@@ -16,7 +16,7 @@
     <string name="off_label">Off</string>
     <string name="event_delete_all_alarms">Elimina tutte le sveglie</string>
     <string name="ringtone_label">Suoneria</string>
-    <string name="imageview_description">ImageView to set an alarm on or off</string>
+    <string name="imageview_state_alarm_description">Immagine per attivare o disattivare una sveglia</string>
     <string name="alarm_repetition_label">Ripetizione</string>
     <string name="no_repetition_option_selected">Nessuna opzione</string>
     <string name="repetition_label">Ripetizione</string>
@@ -37,6 +37,15 @@
     <string name="select_option">Scegli un\'opzione</string>
     <string name="ok_label">OK</string>
     <string name="cancel_label">ANNULLA</string>
+    <string name="delete_alarms">Elimina sveglie</string>
+    <string name="message_delete_all_alarms">Sei sicuro di voler eliminare tutte le sveglie?</string>
+    <string name="no_alarms_to_delete">Nessuna sveglia da eliminare</string>
+    <string name="active_alarm">Sveglia riattivata</string>
+    <string name="inactive_alarm">Sveglia disattivata</string>
+    <string name="delete_alarm">Elimina sveglia</string>
+    <string name="message_delete_alarm">Sei sicuro di voler eliminare questa sveglia?</string>
+    <string name="imageview_ringtone_description">Immagine che descrive se la suoneria è attiva</string>
+    <string name="imageview_vibration_description">Immagine che descrive se la vibrazione è attiva</string>
     <string-array name="repetition_options" >
         <item>Una sola volta</item>
         <item>Giornalmente</item>

@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+/*
+Questa classe rappresenta l'adapter del RecyclerView che mostra le sveglie nella sezione "Sveglie"
+della main activity
+ */
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
 
     private List<Alarm> alarms = new ArrayList<>();
@@ -28,6 +32,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull AlarmAdapter.ViewHolder viewHolder, int i) {
+        /*
+        Seleziono la sveglia corrente e imposto le varie textview e imageview in base alle sue proprietà
+         */
         Alarm currentAlarm = alarms.get(i);
         viewHolder.title.setText(currentAlarm.getTitle());
         Calendar c = Calendar.getInstance();
@@ -35,6 +42,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         c.set(Calendar.MINUTE, currentAlarm.getMinute());
         c.set(Calendar.SECOND, 0);
         viewHolder.time.setText(DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime()));
+
+        /*
+        Nel caso in cui la sveglia presenti la suoneria o la vibrazione attive le imageview assumerano un colore verde
+        altrimenti appariranno grigio scuro
+         */
         if(currentAlarm.isRingtone())
             viewHolder.ringtoneImg.setColorFilter(ContextCompat.getColor(viewHolder.ringtoneImg.getContext(), R.color.colorPrimary));
         else
@@ -43,6 +55,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             viewHolder.vibrationImg.setColorFilter(ContextCompat.getColor(viewHolder.vibrationImg.getContext(), R.color.colorPrimary));
         else
             viewHolder.vibrationImg.setColorFilter(ContextCompat.getColor(viewHolder.vibrationImg.getContext(), R.color.grigioScuro));
+
+        //Nel caso in cui la sveglia sia attiva le textview assumerano un colore nero altrimenti appariranno grigio scuro
         if(currentAlarm.isActive()) {
             viewHolder.title.setTextColor(ContextCompat.getColor(viewHolder.title.getContext(), R.color.nero));
             viewHolder.time.setTextColor(ContextCompat.getColor(viewHolder.time.getContext(), R.color.nero));
@@ -55,6 +69,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             viewHolder.repetition.setTextColor(ContextCompat.getColor(viewHolder.repetition.getContext(), R.color.grigioScuro));
             viewHolder.alarmImg.setImageResource(R.drawable.ic_alarm_off);
         }
+
+        /*
+        In base al tipo di ripetizione scelto aggiorno la textview e imposto i giorni scelti nel casi in cui
+        repetitionType sia "Giorni della settimana"
+         */
+
         if(currentAlarm.getRepetitionType().equals("Una sola volta") || currentAlarm.getRepetitionType().equals("Giornalmente"))
             viewHolder.repetition.setText(currentAlarm.getRepetitionType());
         else {
@@ -69,22 +89,33 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         }
     }
 
+    //Metodo che mi restituisce il numero di sveglie nel RecyclerView
     @Override
     public int getItemCount() {
         return alarms.size();
     }
+
+    /*
+    Metodo che notifica all'adapter che il DataSet è stato modificato in seguito all'aggiunta o
+    alla rimozione o alla modifica di sveglie e che deve essere aggiornata l'interfaccia utente
+     */
 
     void setAlarms(List<Alarm> alarms){
         this.alarms = alarms;
         notifyDataSetChanged();
     }
 
+    //Metodo che restituisce una sveglia in base alla sua posizione
     Alarm getAlarmAt(int position){
         return alarms.get(position);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
+        /*
+        Variabili private del ViewHolder che rappresentano gli elementi del layout
+        dell'elemento sveglia presente in alarm_item che poi viene inserito nel RecyclerView
+        */
         private TextView title;
         private TextView time;
         private TextView repetition;
@@ -94,6 +125,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
+            //Inizializzazione
             title = itemView.findViewById(R.id.alarm_title_item);
             time = itemView.findViewById(R.id.alarm_time_item);
             ringtoneImg = itemView.findViewById(R.id.ringtone_img_item);

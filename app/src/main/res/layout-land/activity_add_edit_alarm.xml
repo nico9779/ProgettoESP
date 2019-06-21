@@ -193,7 +193,8 @@
                             android:text="@string/ringtone_label"
                             android:textColor="@color/colorPrimary"
                             android:textSize="25sp"
-                            android:textStyle="italic" />
+                            android:textStyle="italic"
+                            android:layout_toStartOf="@id/ringtone_switch"/>
 
                         <TextView
                             android:id="@+id/ringtone_state"
@@ -248,7 +249,8 @@
                             android:text="@string/vibrator_label"
                             android:textColor="@color/colorPrimary"
                             android:textSize="25sp"
-                            android:textStyle="italic" />
+                            android:textStyle="italic"
+                            android:layout_toStartOf="@id/vibration_switch"/>
 
                         <TextView
                             android:id="@+id/vibration_state"

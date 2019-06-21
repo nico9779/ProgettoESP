@@ -1,9 +1,6 @@
 package it.gliandroidiani.progettoesp;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.provider.AlarmClock;
 import android.support.annotation.NonNull;
@@ -18,13 +15,19 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
+/*
+Questa classe è la classe principale che ospita i due fragment "AlarmFragment" e "NoteFragment"
+che consentono di visualizzare le sveglie e gli allarmi
+ */
 public class MainActivity extends AppCompatActivity {
 
+    //Variabili per il debugging e per determinare il requestcode dell'activity chiamata
     public static final int ADD_ALARM_REQUEST = 1;
+    private static final int ADD_NOTE_REQUEST = 3;
     public static final String LOG_MAIN_ACTIVITY = "MainActivity";
 
+    //Variabili private
     private BottomNavigationView navigationView;
     private AlarmViewModel alarmViewModel;
     private boolean isConfigurationChanged;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Inizializzazione
         navigationView = findViewById(R.id.bottom_navigation_bar);
         alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
         isConfigurationChanged = false;
@@ -42,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         final AlarmFragment alarmFragment = new AlarmFragment();
         final NoteFragment noteFragment = new NoteFragment();
 
-        //Listener per impostare i fragment in base alla selezione nel menu
+        //Listener per impostare i fragment in base alla selezione nel bottom navigation menu
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -60,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*
+        Nel caso in cui la configurazione cambi a runtime recupero il fragment che stavo mostrando
+        da savedInstanceState
+         */
         if(savedInstanceState != null) {
             isConfigurationChanged = true;
             int item_selected = savedInstanceState.getInt("item_selected");
@@ -70,11 +78,15 @@ public class MainActivity extends AppCompatActivity {
             navigationView.setSelectedItemId(R.id.alarm);
         }
 
+        /*
+        Ogni volta che ricevo un'intent eseguo uno o nessuno dei due metodi ovvero quello
+        per aggiungere le sveglie con assistant o quello per aggiungere le note con assistant
+         */
         Intent intent = getIntent();
         addAlarmAssistant(intent);
     }
 
-    //Metodo per rimpiazzare un fragment in activity_main.xml
+    //Metodo per rimpiazzare un fragment nella main activity
     private void setFragment(Fragment fragment)
     {
         if(fragment!=null)
@@ -96,24 +108,26 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(selected==R.id.note){
             intent = new Intent(this, ActivityAddNote.class);
-            startActivity(intent);
+            startActivityForResult(intent, ADD_NOTE_REQUEST);
         }
     }
 
-    //Metodo per gestire l'interazione con assistant
+    //Metodo per gestire l'interazione con assistant per aggiungere le sveglie
     private void addAlarmAssistant(Intent intent){
-        Log.d(LOG_MAIN_ACTIVITY, String.valueOf(intent.getAction()));
+        String action = intent.getAction();
+        /*
+        Inizialmente verifico che non ci sia stato un cambio di configurazione.
+        Questo si fa perchè nel caso in cui si aggiunga una sveglia con assistant l'activity riceve
+        un'intent e se cambia la configurazione a runtime si continua a ricevere tale intent dato
+        che l'activity viene distrutta e ricreata e viene eseguito nuovamente il codice in onCreate.
+         */
         if(!isConfigurationChanged) {
             // verifico se l'intent che ricevo è triggerato dall'assistent per impostare una sveglia
-            if (AlarmClock.ACTION_SET_ALARM.equals(intent.getAction())) {
+            if (AlarmClock.ACTION_SET_ALARM.equals(action)) {
                 // verifico se ci sono gli extra che mi servono per impostare la sveglia
                 if (intent.hasExtra(AlarmClock.EXTRA_HOUR) && intent.hasExtra(AlarmClock.EXTRA_MINUTES)) {
                     int hours = intent.getIntExtra(AlarmClock.EXTRA_HOUR, -1);
                     int minute = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, -1);
-                    Calendar c = Calendar.getInstance();
-                    c.set(Calendar.HOUR_OF_DAY, hours);
-                    c.set(Calendar.MINUTE, minute);
-                    c.set(Calendar.SECOND, 0);
 
                     String title = "Sveglia";
 
@@ -124,6 +138,10 @@ public class MainActivity extends AppCompatActivity {
                     String repetitionType = "Una sola volta";
                     boolean[] repetitionDays = new boolean[7];
 
+                    /*
+                    Nel caso in cui sia presente l'extra_days lo recupero dall'intent e imposto
+                    correttamente i valori di repetitionType e repetitionDays
+                     */
                     if(intent.hasExtra(AlarmClock.EXTRA_DAYS)){
                         ArrayList<Integer> repetitionDaysArrayList = intent.getIntegerArrayListExtra(AlarmClock.EXTRA_DAYS);
                         if(repetitionDaysArrayList.size() == 7)
@@ -138,7 +156,8 @@ public class MainActivity extends AppCompatActivity {
                                 repetitionDays[6] = true;
                         }
                     }
-                    Alarm alarm = new Alarm(title, hours, minute, true,false, true, repetitionType);
+                    //Creo la nuova sveglia e la aggiungo nel database
+                    Alarm alarm = new Alarm(title, hours, minute, true,true, true, repetitionType);
                     alarm.setRepetitionDays(repetitionDays);
                     long alarmID = alarmViewModel.addAlarm(alarm);
                     ScheduleAlarmHelper.scheduleAlarm(this, alarmID, alarm);
@@ -146,11 +165,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             // verifico se l'intent che ricevo è triggerato dall'assistent per vedere tutte le mie sveglie
-            else if (AlarmClock.ACTION_SHOW_ALARMS.equals(intent.getAction()))
-                Log.d(LOG_MAIN_ACTIVITY, intent.getAction());
+            else if (AlarmClock.ACTION_SHOW_ALARMS.equals(action))
+                Log.d(LOG_MAIN_ACTIVITY, action);
         }
     }
 
+    /*
+    Metodo per salvare lo stato del fragment visualizzato dall'activity
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         int item_selected = navigationView.getSelectedItemId();

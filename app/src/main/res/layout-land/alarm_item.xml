@@ -49,7 +49,7 @@
             android:id="@+id/alarm_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/imageview_description"
+            android:contentDescription="@string/imageview_state_alarm_description"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_marginEnd="15dp"
@@ -64,7 +64,8 @@
                 android:id="@+id/ringtone_img_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_music_note" />
+                android:src="@drawable/ic_music_note"
+                android:contentDescription="@string/imageview_ringtone_description" />
 
             <ImageView
                 android:id="@+id/vibration_img_item"
@@ -72,7 +73,8 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_vibration"
                 android:layout_toEndOf="@id/ringtone_img_item"
-                android:layout_marginStart="10dp"/>
+                android:layout_marginStart="10dp"
+                android:contentDescription="@string/imageview_vibration_description" />
 
         </RelativeLayout>
 
