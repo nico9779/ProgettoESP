@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:backgroundTint="@color/backgroundCardView"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="5dp"
+    app:cardUseCompatPadding="true">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/note_title_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Titolo"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/nero"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/note_description_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/note_title_item"
+            android:text="Descrizione"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/nero"
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

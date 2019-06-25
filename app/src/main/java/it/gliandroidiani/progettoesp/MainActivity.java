@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.actions.NoteIntents;
+
 import java.util.ArrayList;
 
 /*
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     //Variabili private
     private BottomNavigationView navigationView;
     private AlarmViewModel alarmViewModel;
+    private NoteViewModel noteViewModel;
     private boolean isConfigurationChanged;
 
     @Override
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         //Inizializzazione
         navigationView = findViewById(R.id.bottom_navigation_bar);
         alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
+        noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
         isConfigurationChanged = false;
 
         //Istanzio i fragment
@@ -84,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
          */
         Intent intent = getIntent();
         addAlarmAssistant(intent);
+        addNoteAssistant(intent);
     }
 
     //Metodo per rimpiazzare un fragment nella main activity
@@ -107,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, ADD_ALARM_REQUEST);
         }
         else if(selected==R.id.note){
-            intent = new Intent(this, ActivityAddNote.class);
+            intent = new Intent(this, ActivityAddEditNote.class);
             startActivityForResult(intent, ADD_NOTE_REQUEST);
         }
     }
@@ -158,15 +163,40 @@ public class MainActivity extends AppCompatActivity {
                     }
                     //Creo la nuova sveglia e la aggiungo nel database
                     Alarm alarm = new Alarm(title, hours, minute, true,true, true, repetitionType);
-                    alarm.setRepetitionDays(repetitionDays);
+                    if(repetitionType.equals("Giorni della settimana")) {
+                        alarm.setRepetitionDays(repetitionDays);
+                    }
                     long alarmID = alarmViewModel.addAlarm(alarm);
                     ScheduleAlarmHelper.scheduleAlarm(this, alarmID, alarm);
                     Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(this, R.string.impossible_add_alarm, Toast.LENGTH_SHORT).show();
                 }
             }
             // verifico se l'intent che ricevo è triggerato dall'assistent per vedere tutte le mie sveglie
             else if (AlarmClock.ACTION_SHOW_ALARMS.equals(action))
                 Log.d(LOG_MAIN_ACTIVITY, action);
+        }
+    }
+
+    //Metodo per gestire l'interazione con assistant per aggiungere le note
+    private void addNoteAssistant(Intent intent){
+        String action = intent.getAction();
+        if(!isConfigurationChanged) {
+            if (NoteIntents.ACTION_CREATE_NOTE.equals(action)) {
+                if(intent.hasExtra(Intent.EXTRA_TEXT)){
+                    String title = "Nota";
+                    String description = intent.getStringExtra(Intent.EXTRA_TEXT);
+                    Note note = new Note(title, description);
+                    noteViewModel.addNote(note);
+                    navigationView.setSelectedItemId(R.id.note);
+                    Toast.makeText(this, R.string.event_save_note, Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(this, R.string.impossible_add_note, Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 

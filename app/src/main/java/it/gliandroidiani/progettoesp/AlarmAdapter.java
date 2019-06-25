@@ -18,23 +18,22 @@ import java.util.List;
 Questa classe rappresenta l'adapter del RecyclerView che mostra le sveglie nella sezione "Sveglie"
 della main activity
  */
-public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
+public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder> {
 
     private List<Alarm> alarms = new ArrayList<>();
     private OnItemClickListener listener;
 
     @NonNull
     @Override
-    public AlarmAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public AlarmAdapter.AlarmViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.alarm_item, viewGroup, false);
-        return new ViewHolder(view);
+        return new AlarmViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AlarmAdapter.ViewHolder viewHolder, int i) {
-        /*
-        Seleziono la sveglia corrente e imposto le varie textview e imageview in base alle sue proprietà
-         */
+    public void onBindViewHolder(@NonNull AlarmAdapter.AlarmViewHolder viewHolder, int i) {
+
+        //Seleziono la sveglia corrente e imposto le varie textview e imageview in base alle sue proprietà
         Alarm currentAlarm = alarms.get(i);
         viewHolder.title.setText(currentAlarm.getTitle());
         Calendar c = Calendar.getInstance();
@@ -110,7 +109,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         return alarms.get(position);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class AlarmViewHolder extends RecyclerView.ViewHolder {
 
         /*
         Variabili private del ViewHolder che rappresentano gli elementi del layout
@@ -123,7 +122,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         private ImageView ringtoneImg;
         private ImageView vibrationImg;
 
-        ViewHolder(@NonNull View itemView) {
+        AlarmViewHolder(@NonNull View itemView) {
             super(itemView);
             //Inizializzazione
             title = itemView.findViewById(R.id.alarm_title_item);

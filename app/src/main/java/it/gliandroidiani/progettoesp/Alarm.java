@@ -26,6 +26,9 @@ public class Alarm {
         this.vibration = vibration;
         this.active = active;
         this.repetitionType = repetitionType;
+        if(repetitionType.equals("Una sola volta") || repetitionType.equals("Giornalmente")){
+            this.repetitionDays = new boolean[] {false, false, false, false, false, false, false};
+        }
     }
 
     //Parametri entità allarme

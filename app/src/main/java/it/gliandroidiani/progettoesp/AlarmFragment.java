@@ -81,7 +81,7 @@ public class AlarmFragment extends Fragment {
             public void onChanged(@Nullable List<Alarm> alarms) {
                 adapter.setAlarms(alarms);
 
-                if(alarms.size() == 0) {
+                if(alarms.isEmpty()) {
                     noAlarmTextView.setVisibility(View.VISIBLE);
                 }
                 else {
@@ -134,7 +134,9 @@ public class AlarmFragment extends Fragment {
                 intent.putExtra(EXTRA_VIBRATION, alarm.isVibration());
                 intent.putExtra(EXTRA_ACTIVE, alarm.isActive());
                 intent.putExtra(EXTRA_REPETITION_TYPE, alarm.getRepetitionType());
-                intent.putExtra(EXTRA_REPETITION_DAYS, alarm.getRepetitionDays());
+                if(alarm.getRepetitionType().equals("Giorni della settimana")) {
+                    intent.putExtra(EXTRA_REPETITION_DAYS, alarm.getRepetitionDays());
+                }
                 startActivityForResult(intent, EDIT_ALARM_REQUEST);
             }
 

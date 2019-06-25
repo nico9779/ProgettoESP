@@ -9,7 +9,7 @@
     <string name="event_cancel_alarm">Sveglia annullata</string>
     <string name="event_delete_alarm">Sveglia eliminata</string>
     <string name="deleted_all_alarms">Tutte le sveglie sono state eliminate</string>
-    <string name="alarm_title_label">Titolo</string>
+    <string name="title_label">Titolo</string>
     <string name="alarm_time_label">Ora</string>
     <string name="vibrator_label">Vibrazione</string>
     <string name="on_label">On</string>
@@ -46,6 +46,29 @@
     <string name="message_delete_alarm">Sei sicuro di voler eliminare questa sveglia?</string>
     <string name="imageview_ringtone_description">Immagine che descrive se la suoneria è attiva</string>
     <string name="imageview_vibration_description">Immagine che descrive se la vibrazione è attiva</string>
+    <string name="description_hint">Inserisci la descrizione</string>
+    <string name="event_save_note">Nota salvata</string>
+    <string name="event_delete_all_notes">Elimina tutte le note</string>
+    <string name="add_note">Aggiungi una nota</string>
+    <string name="cancel_note">Annulla nota</string>
+    <string name="edit_note">Modifica nota</string>
+    <string name="cancel_edit_note">Annulla modifica</string>
+    <string name="message_cancel_note">Sei sicuro di voler annullare questa nota?</string>
+    <string name="message_cancel_edit_note">Sei sicuro di voler annullare questa modifica?</string>
+    <string name="event_cancel_note">Nota annullata</string>
+    <string name="event_delete_note">Nota eliminata</string>
+    <string name="cancel_edit_note_toast">Modifica annullata</string>
+    <string name="insert_title_and_description_note">Inserisci un titolo e una descrizione</string>
+    <string name="delete_notes">Elimina note</string>
+    <string name="message_delete_all_notes">Sei sicuro di voler eliminare tutte le note?</string>
+    <string name="deleted_all_notes">Tutte le note sono state eliminate</string>
+    <string name="no_notes_to_delete">Nessuna nota da eliminare</string>
+    <string name="delete_note">Elimina nota</string>
+    <string name="message_delete_note">Sei sicuro di voler eliminare questa nota?</string>
+    <string name="impossible_edit_note">La nota non può essere modificata</string>
+    <string name="event_edit_note">Nota modificata</string>
+    <string name="impossible_add_alarm">Impossibile creare la sveglia</string>
+    <string name="impossible_add_note">Impossibile creare la nota</string>
     <string-array name="repetition_options" >
         <item>Una sola volta</item>
         <item>Giornalmente</item>

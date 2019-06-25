@@ -34,7 +34,7 @@
                 android:id="@+id/alarm_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/alarm_title_label"
+                android:hint="@string/title_label"
                 android:inputType="textCapSentences"
                 android:textSize="30sp" />
 

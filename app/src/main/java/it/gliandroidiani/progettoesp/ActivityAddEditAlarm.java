@@ -158,7 +158,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         if(intent.hasExtra(AlarmFragment.EXTRA_ID)){
             alarmToolbar.setTitle(getResources().getString(R.string.edit_alarm));
             alarmTitle.setText(intent.getStringExtra(AlarmFragment.EXTRA_TITLE));
-            updateTimeText(intent.getIntExtra(AlarmFragment.EXTRA_HOURS, 0),intent.getIntExtra(AlarmFragment.EXTRA_MINUTE, 0));
+            updateTimeText(intent.getIntExtra(AlarmFragment.EXTRA_HOURS, -1),intent.getIntExtra(AlarmFragment.EXTRA_MINUTE, -1));
             ringtone_switch.setChecked(intent.getBooleanExtra(AlarmFragment.EXTRA_RINGTONE, false));
             vibration_switch.setChecked(intent.getBooleanExtra(AlarmFragment.EXTRA_VIBRATION, false));
             String repetitionType = intent.getStringExtra(AlarmFragment.EXTRA_REPETITION_TYPE);
@@ -278,7 +278,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         }
     }
 
-    //Metodo che salva una sveglia nel database
+    //Metodo che salva o modifica una sveglia nel database
     private void saveAlarm(){
         //Determino i parametri della sveglia
         String title = alarmTitle.getText().toString();
@@ -319,7 +319,9 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
          */
         if(!getIntent().hasExtra(AlarmFragment.EXTRA_ID)){
             Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, true, repetition);
-            alarm.setRepetitionDays(repetitionOptionsDaysChecked);
+            if(repetition.equals("Giorni della settimana")){
+                alarm.setRepetitionDays(repetitionOptionsDaysChecked);
+            }
             long alarmID = alarmViewModel.addAlarm(alarm);
             ScheduleAlarmHelper.scheduleAlarm(this, alarmID, alarm);
             Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
@@ -332,7 +334,9 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
                 boolean active = getIntent().getBooleanExtra(AlarmFragment.EXTRA_ACTIVE, false);
                 Alarm alarm = new Alarm(title, hours, minute, ringtone, vibration, active, repetition);
                 alarm.setId(id);
-                alarm.setRepetitionDays(repetitionOptionsDaysChecked);
+                if(repetition.equals("Giorni della settimana")) {
+                    alarm.setRepetitionDays(repetitionOptionsDaysChecked);
+                }
                 alarmViewModel.updateAlarm(alarm);
                 if(active) {
                     ScheduleAlarmHelper.scheduleAlarm(this, id, alarm);

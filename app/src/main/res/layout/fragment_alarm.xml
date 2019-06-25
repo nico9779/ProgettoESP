@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,6 +26,7 @@
 
     <!-- TextView da mostrare nel caso in cui non ci siano sveglie
      presenti nel database -->
+
     <TextView
         android:id="@+id/starting_string_alarm"
         android:layout_width="wrap_content"
