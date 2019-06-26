@@ -37,6 +37,13 @@
                 android:inputType="textCapSentences"
                 android:textSize="30sp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="gg/mm/aaaa, hh:mm:ss"
+                android:id="@+id/list_note_date"
+                />
         </android.support.design.widget.TextInputLayout>
 
     </RelativeLayout>

@@ -1,5 +1,6 @@
 package it.gliandroidiani.progettoesp;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -63,13 +64,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         */
         private TextView title;
         private TextView description;
+        private TextView data;
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
             //Inizializzazione
             title = itemView.findViewById(R.id.note_title_item);
             description = itemView.findViewById(R.id.note_description_item);
+            data= itemView.findViewById(R.id.list_note_date);
 
+
+            data.setText(Note.getDateTimeFormatted(data.getContext()));
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

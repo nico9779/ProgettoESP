@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private AlarmViewModel alarmViewModel;
     private NoteViewModel noteViewModel;
     private boolean isConfigurationChanged;
+    private long dateInMIllis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,19 +135,20 @@ public class MainActivity extends AppCompatActivity {
                     int hours = intent.getIntExtra(AlarmClock.EXTRA_HOUR, -1);
                     int minute = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, -1);
 
-                    String title = "Sveglia";
+                    String title = "Sveglia"; //titolo di dafault se non dovess essere impostato dall'utente
+
 
                     if(intent.hasExtra(AlarmClock.EXTRA_MESSAGE)){
                         title = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
                     }
 
-                    String repetitionType = "Una sola volta";
+                    String repetitionType = "Una sola volta";//ripetizione di Default
                     boolean[] repetitionDays = new boolean[7];
 
                     /*
                     Nel caso in cui sia presente l'extra_days lo recupero dall'intent e imposto
                     correttamente i valori di repetitionType e repetitionDays
-                     */
+                    */
                     if(intent.hasExtra(AlarmClock.EXTRA_DAYS)){
                         ArrayList<Integer> repetitionDaysArrayList = intent.getIntegerArrayListExtra(AlarmClock.EXTRA_DAYS);
                         if(repetitionDaysArrayList.size() == 7)
@@ -188,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 if(intent.hasExtra(Intent.EXTRA_TEXT)){
                     String title = "Nota";
                     String description = intent.getStringExtra(Intent.EXTRA_TEXT);
-                    Note note = new Note(title, description);
+                    Note note = new Note(title, System.currentTimeMillis(),description);
                     noteViewModel.addNote(note);
                     navigationView.setSelectedItemId(R.id.note);
                     Toast.makeText(this, R.string.event_save_note, Toast.LENGTH_SHORT).show();

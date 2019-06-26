@@ -108,7 +108,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
         Controllo se devo creare l'allarme o modificarla e svolgo l'opzione corretta
          */
         if(!getIntent().hasExtra(NoteFragment.EXTRA_ID_NOTE)){
-            Note note = new Note(title, description);
+            Note note = new Note(title,System.currentTimeMillis(),description);
             noteViewModel.addNote(note);
             Toast.makeText(this, R.string.event_save_note, Toast.LENGTH_SHORT).show();
         }
@@ -117,7 +117,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
             if (id == -1)
                 Toast.makeText(this, R.string.impossible_edit_note, Toast.LENGTH_SHORT).show();
             else {
-                Note note = new Note(title, description);
+                Note note = new Note(title,System.currentTimeMillis(), description);
                 note.setId(id);
                 noteViewModel.updateNote(note);
                 Toast.makeText(this, R.string.event_edit_note, Toast.LENGTH_SHORT).show();
