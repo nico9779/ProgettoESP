@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import it.gliandroidiani.progettoesp.Model.Note;
 import it.gliandroidiani.progettoesp.R;
+import it.gliandroidiani.progettoesp.utils.NoteUtils;
 
 public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteHolder>
 {
@@ -33,7 +34,7 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteHolder>
         Note note = getNote(position);
         if(note!= null){
             noteHolder.noteText.setText(notes.getNoteText());
-            noteHolder.noteData.setText();
+            noteHolder.noteData.setText(NoteUtils.dateFromLong(note.getNoteData()));
 
          }
     }
