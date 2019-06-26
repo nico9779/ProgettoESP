@@ -22,12 +22,12 @@ public class Alarm {
         this.title = title;
         this.hours = hours;
         this.minute = minute;
-        this.ringtone = ringtone;
-        this.vibration = vibration;
+        this.ringtone = ringtone; //boleano per indicare se la sveglie è attiva
+        this.vibration = vibration; // sempre un booleano
         this.active = active;
         this.repetitionType = repetitionType;
         if(repetitionType.equals("Una sola volta") || repetitionType.equals("Giornalmente")){
-            this.repetitionDays = new boolean[] {false, false, false, false, false, false, false};
+            this.repetitionDays = new boolean[] {false, false, false, false, false, false, false}; //giorni della settimana
         }
     }
 

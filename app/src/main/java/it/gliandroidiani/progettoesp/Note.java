@@ -16,6 +16,7 @@ public class Note {
     public Note(String title, String description){
         this.title = title;
         this.description = description;
+
     }
 
     //Parametri entità nota
