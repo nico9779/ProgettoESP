@@ -23,11 +23,11 @@ il titolo e la descrizione e il giorno e l'ora on cui è stata presa
 public class Note {
 
     private long mDateTime;
-    public Note(String title,long dateInMIllis, String description)
+    public Note(String title,long dateInMillis, String description)
     {
         this.title = title;
         this.description = description;
-        mDateTime= dateInMIllis;
+        mDateTime= dateInMillis;
     }
     public void setDateTime(long dateTime)
     {
@@ -46,8 +46,7 @@ public class Note {
     private String description;
 
     //Metodi Getter and Setter
-    public long getmDateTime()
-    {
+    public long getDateTime() {
         return mDateTime;
     }
     /**

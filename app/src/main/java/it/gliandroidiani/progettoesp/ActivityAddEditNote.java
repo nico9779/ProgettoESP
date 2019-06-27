@@ -14,6 +14,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 public class ActivityAddEditNote extends AppCompatActivity {
 
     //Variabili private della classe
@@ -123,6 +126,17 @@ public class ActivityAddEditNote extends AppCompatActivity {
                 Toast.makeText(this, R.string.event_edit_note, Toast.LENGTH_SHORT).show();
             }
         }
+        //sort notes from new to old
+        Collections.sort(notes, new Comparator<Note>() {
+            @Override
+            public int compare(Note lhs, Note rhs) {
+                if(lhs.getDateTime() > rhs.getDateTime()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
 
         //Terminata l'operazione di salvataggio o modifica ritorno alla main activity
         Intent intent = new Intent();
