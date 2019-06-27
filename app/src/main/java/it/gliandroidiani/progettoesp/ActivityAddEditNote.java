@@ -17,6 +17,8 @@ import android.widget.Toast;
 import java.util.Collections;
 import java.util.Comparator;
 
+import static it.gliandroidiani.progettoesp.R.id.list_note_date;
+
 public class ActivityAddEditNote extends AppCompatActivity {
 
     //Variabili private della classe
@@ -24,6 +26,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
     private EditText noteDescription;
     private Toolbar noteToolbar;
     private NoteViewModel noteViewModel;
+    private long mNoteCreationTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +36,11 @@ public class ActivityAddEditNote extends AppCompatActivity {
         //Inizializzazione delle variabili
         noteTitle = findViewById(R.id.note_title);
         noteDescription = findViewById(R.id.note_description);
+        mNoteCreationTime= findViewById(list_note_date);
         noteToolbar = findViewById(R.id.add_note_toolbar);
 
         noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
-
+        mNoteCreationTime = System.currentTimeMillis();
         //Aggiungo alla toolbar l'icona per annullare una nota e imposto la action bar
         noteToolbar.setNavigationIcon(ContextCompat.getDrawable(this, R.drawable.ic_close_white_24dp));
         setSupportActionBar(noteToolbar);
@@ -127,7 +131,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
             }
         }
         //sort notes from new to old
-        Collections.sort(notes, new Comparator<Note>() {
+        Collections.sort(, new Comparator<Note>() {
             @Override
             public int compare(Note lhs, Note rhs) {
                 if(lhs.getDateTime() > rhs.getDateTime()) {

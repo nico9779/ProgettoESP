@@ -23,16 +23,13 @@ il titolo e la descrizione e il giorno e l'ora on cui è stata presa
 public class Note {
 
     private long mDateTime;
-    public Note(String title,long dateInMillis, String description)
+    public Note(String title, long dateInMillis, String description)
     {
         this.title = title;
         this.description = description;
-        mDateTime= dateInMillis;
+        this.mDateTime= dateInMillis;
     }
-    public void setDateTime(long dateTime)
-    {
-        mDateTime = dateTime;
-    }
+
     //Parametri entità nota
 
     @PrimaryKey(autoGenerate = true)
@@ -75,6 +72,10 @@ public class Note {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+    public void setDateTime(long dateTime)
+    {
+        mDateTime = dateTime;
     }
 
     public String getDescription() {

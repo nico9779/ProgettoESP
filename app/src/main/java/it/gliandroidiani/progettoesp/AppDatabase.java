@@ -10,7 +10,7 @@ Questa classe descrive il database dell'applicazione.
 Implementa il design pattern singleton.
  */
 
-@Database(entities = {Alarm.class, Note.class}, version = 1)
+@Database(entities = {Alarm.class, Note.class}, version = 2)
 @TypeConverters(Converter.class)
 public abstract class AppDatabase extends android.arch.persistence.room.RoomDatabase {
 

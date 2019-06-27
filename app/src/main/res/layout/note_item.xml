@@ -26,16 +26,25 @@
             android:textSize="25sp"
             android:textStyle="bold" />
 
+
         <TextView
             android:id="@+id/note_description_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/note_title_item"
+            android:layout_below="@id/list_note_date"
             android:text="Descrizione"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/nero"
             android:ellipsize="end"
             android:maxLines="1" />
+
+        <TextView
+            android:id="@+id/list_note_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/note_title_item"
+            android:text="gg/mm/aaaa, hh:mm:ss"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </RelativeLayout>
 
