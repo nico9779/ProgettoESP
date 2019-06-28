@@ -41,14 +41,19 @@ public class ActivityAddEditNote extends AppCompatActivity {
         noteDescription = findViewById(R.id.note_description);
         mNoteCreationTime = findViewById(list_note_date);
         noteToolbar = findViewById(R.id.add_note_toolbar);
+        noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
+        currentTime = System.currentTimeMillis();
 
+        /*
+          L'oggetto SimpleDateFormat mi permette di trasformare il tempo restituito da System.currentTimeMillis()
+          in una stringa leggibile usando il pattern dd/MM/yyyy HH:mm:ss e quindi lo uso per inizializzare
+          la textview mNoteCreationTime.
+         */
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", getResources().getConfiguration().locale);
         formatter.setTimeZone(TimeZone.getDefault());
-        currentTime = System.currentTimeMillis();
         mNoteCreationTime.setText(formatter.format(new Date(currentTime)));
 
 
-        noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
         //Aggiungo alla toolbar l'icona per annullare una nota e imposto la action bar
         noteToolbar.setNavigationIcon(ContextCompat.getDrawable(this, R.drawable.ic_close_white_24dp));
         setSupportActionBar(noteToolbar);
@@ -105,6 +110,11 @@ public class ActivityAddEditNote extends AppCompatActivity {
             noteDescription.setText(intent.getStringExtra(NoteFragment.EXTRA_DESCRIPTION_NOTE));
         }
 
+        /*
+        Nel caso in cui ci sia un cambiamento della configurazione a runtime recupero i valori
+        salvati in savedInstanceState e ricostruisco le textview dell'activity e l'orario della
+        creazione o modifica della nota
+         */
         if(savedInstanceState!=null){
             currentTime = savedInstanceState.getLong("currentTime");
             String timeString = savedInstanceState.getString("timeString");
@@ -173,6 +183,12 @@ public class ActivityAddEditNote extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /*
+    Metodo che mi permette di salvare lo stato dell'activity nel caso di modifiche della
+    configurazione a runtime (come ad esempio girare lo schermo passando da portrait a landscape).
+    Le variabili che vengono salvate sono l'orario di creazione o modifica della nota e la textview
+    che contiene tale valore.
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         long time = currentTime;
