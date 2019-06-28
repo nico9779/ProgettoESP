@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -130,8 +131,10 @@ public class ActivityAddEditNote extends AppCompatActivity {
                 Toast.makeText(this, R.string.event_edit_note, Toast.LENGTH_SHORT).show();
             }
         }
+        ArrayList<Note> notes = new ArrayList<>();
+        notes = noteViewModel.getAllNotes().getValue();
         //sort notes from new to old
-        Collections.sort(, new Comparator<Note>() {
+        Collections.sort(notes, new Comparator<Note>() {
             @Override
             public int compare(Note lhs, Note rhs) {
                 if(lhs.getDateTime() > rhs.getDateTime()) {
