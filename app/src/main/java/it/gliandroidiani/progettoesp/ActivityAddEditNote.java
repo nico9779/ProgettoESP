@@ -1,5 +1,6 @@
 package it.gliandroidiani.progettoesp;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +28,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
     private EditText noteDescription;
     private Toolbar noteToolbar;
     private NoteViewModel noteViewModel;
+
     private long mNoteCreationTime;
 
     @Override
@@ -37,7 +39,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
         //Inizializzazione delle variabili
         noteTitle = findViewById(R.id.note_title);
         noteDescription = findViewById(R.id.note_description);
-        mNoteCreationTime= findViewById(list_note_date);
+        mNoteCreationTime = findViewById(list_note_date);
         noteToolbar = findViewById(R.id.add_note_toolbar);
 
         noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);

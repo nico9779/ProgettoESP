@@ -22,15 +22,16 @@ il titolo e la descrizione e il giorno e l'ora on cui è stata presa
 @Entity(tableName = "note_table")
 public class Note {
 
-    private long mDateTime;
-    public Note(String title, long dateInMillis, String description)
+    public long mDateTime;
+    public Note(String title, long mDateTime, String description)
     {
         this.title = title;
+        this.mDateTime= mDateTime;
         this.description = description;
-        this.mDateTime= dateInMillis;
     }
 
-    //Parametri entità nota
+
+//Parametri entità nota
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -52,6 +53,7 @@ public class Note {
      * @return String containing the date and time of the creation of the note
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
+    //metodo che ritorna la data in un formato leggibile in stringa
     public String getDateTimeFormatted(Context context) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"
                 , context.getResources().getConfiguration().locale);
@@ -73,6 +75,7 @@ public class Note {
     public void setTitle(String title) {
         this.title = title;
     }
+
     public void setDateTime(long dateTime)
     {
         mDateTime = dateTime;
