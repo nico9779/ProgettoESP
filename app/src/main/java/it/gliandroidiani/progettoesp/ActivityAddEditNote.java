@@ -1,8 +1,6 @@
 package it.gliandroidiani.progettoesp;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
@@ -18,9 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -33,21 +28,24 @@ public class ActivityAddEditNote extends AppCompatActivity {
     private EditText noteDescription;
     private Toolbar noteToolbar;
     private NoteViewModel noteViewModel;
+    private TextView mNoteCreationTime;
+    private long currentTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_note);
+        setContentView(R.layout.activity_add_edit_note);
 
         //Inizializzazione delle variabili
         noteTitle = findViewById(R.id.note_title);
         noteDescription = findViewById(R.id.note_description);
-        TextView mNoteCreationTime = findViewById(list_note_date);
+        mNoteCreationTime = findViewById(list_note_date);
         noteToolbar = findViewById(R.id.add_note_toolbar);
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", getResources().getConfiguration().locale);
         formatter.setTimeZone(TimeZone.getDefault());
-        mNoteCreationTime.setText(formatter.format(new Date(System.currentTimeMillis())));
+        currentTime = System.currentTimeMillis();
+        mNoteCreationTime.setText(formatter.format(new Date(currentTime)));
 
 
         noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
@@ -106,6 +104,12 @@ public class ActivityAddEditNote extends AppCompatActivity {
             noteTitle.setText(intent.getStringExtra(NoteFragment.EXTRA_TITLE_NOTE));
             noteDescription.setText(intent.getStringExtra(NoteFragment.EXTRA_DESCRIPTION_NOTE));
         }
+
+        if(savedInstanceState!=null){
+            currentTime = savedInstanceState.getLong("currentTime");
+            String timeString = savedInstanceState.getString("timeString");
+            if(timeString!=null) mNoteCreationTime.setText(timeString);
+        }
     }
 
     //Metodo che salva o modifica una nota nel database
@@ -125,7 +129,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
         Controllo se devo creare l'allarme o modificarla e svolgo l'opzione corretta
          */
         if(!getIntent().hasExtra(NoteFragment.EXTRA_ID_NOTE)){
-            Note note = new Note(title,System.currentTimeMillis(),description);
+            Note note = new Note(title,currentTime,description);
             noteViewModel.addNote(note);
             Toast.makeText(this, R.string.event_save_note, Toast.LENGTH_SHORT).show();
         }
@@ -134,7 +138,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
             if (id == -1)
                 Toast.makeText(this, R.string.impossible_edit_note, Toast.LENGTH_SHORT).show();
             else {
-                Note note = new Note(title,System.currentTimeMillis(), description);
+                Note note = new Note(title,currentTime, description);
                 note.setId(id);
                 noteViewModel.updateNote(note);
                 Toast.makeText(this, R.string.event_edit_note, Toast.LENGTH_SHORT).show();
@@ -167,5 +171,14 @@ public class ActivityAddEditNote extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        long time = currentTime;
+        String timeString = mNoteCreationTime.getText().toString();
+        outState.putLong("currentTime", time);
+        outState.putString("timeString", timeString);
+        super.onSaveInstanceState(outState);
     }
 }

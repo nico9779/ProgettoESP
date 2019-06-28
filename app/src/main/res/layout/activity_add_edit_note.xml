@@ -44,6 +44,7 @@
                 android:layout_below="@id/title_layout"
                 android:layout_alignBottom="@id/note_title"
                 android:text="gg/mm/aaaa, hh:mm:ss"
+                android:layout_marginStart="5dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
         </android.support.design.widget.TextInputLayout>

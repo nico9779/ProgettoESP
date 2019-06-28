@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                 if(intent.hasExtra(Intent.EXTRA_TEXT)){
                     String title = "Nota";
                     String description = intent.getStringExtra(Intent.EXTRA_TEXT);
-                    Note note = new Note(title, System.currentTimeMillis(),description);
+                    Note note = new Note(title, System.currentTimeMillis(), description);
                     noteViewModel.addNote(note);
                     navigationView.setSelectedItemId(R.id.note);
                     Toast.makeText(this, R.string.event_save_note, Toast.LENGTH_SHORT).show();
