@@ -2,6 +2,7 @@ package it.gliandroidiani.progettoesp;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
@@ -13,11 +14,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.TimeZone;
 
 import static it.gliandroidiani.progettoesp.R.id.list_note_date;
 
@@ -29,8 +34,6 @@ public class ActivityAddEditNote extends AppCompatActivity {
     private Toolbar noteToolbar;
     private NoteViewModel noteViewModel;
 
-    private long mNoteCreationTime;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +42,15 @@ public class ActivityAddEditNote extends AppCompatActivity {
         //Inizializzazione delle variabili
         noteTitle = findViewById(R.id.note_title);
         noteDescription = findViewById(R.id.note_description);
-        mNoteCreationTime = findViewById(list_note_date);
+        TextView mNoteCreationTime = findViewById(list_note_date);
         noteToolbar = findViewById(R.id.add_note_toolbar);
 
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", getResources().getConfiguration().locale);
+        formatter.setTimeZone(TimeZone.getDefault());
+        mNoteCreationTime.setText(formatter.format(new Date(System.currentTimeMillis())));
+
+
         noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
-        mNoteCreationTime = System.currentTimeMillis();
         //Aggiungo alla toolbar l'icona per annullare una nota e imposto la action bar
         noteToolbar.setNavigationIcon(ContextCompat.getDrawable(this, R.drawable.ic_close_white_24dp));
         setSupportActionBar(noteToolbar);
@@ -133,19 +140,6 @@ public class ActivityAddEditNote extends AppCompatActivity {
                 Toast.makeText(this, R.string.event_edit_note, Toast.LENGTH_SHORT).show();
             }
         }
-        ArrayList<Note> notes = new ArrayList<>();
-        notes = noteViewModel.getAllNotes().getValue();
-        //sort notes from new to old
-        Collections.sort(notes, new Comparator<Note>() {
-            @Override
-            public int compare(Note lhs, Note rhs) {
-                if(lhs.getDateTime() > rhs.getDateTime()) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-        });
 
         //Terminata l'operazione di salvataggio o modifica ritorno alla main activity
         Intent intent = new Intent();

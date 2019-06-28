@@ -5,9 +5,6 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,7 +19,6 @@ il titolo e la descrizione e il giorno e l'ora on cui è stata presa
 @Entity(tableName = "note_table")
 public class Note {
 
-    public long mDateTime;
     public Note(String title, long mDateTime, String description)
     {
         this.title = title;
@@ -43,23 +39,11 @@ public class Note {
     @ColumnInfo(name = "description")
     private String description;
 
+    @ColumnInfo(name = "date")
+    private long mDateTime;
+
     //Metodi Getter and Setter
-    public long getDateTime() {
-        return mDateTime;
-    }
-    /**
-     * Get date time as a formatted string
-     * @param context The context is used to convert the string to user set locale
-     * @return String containing the date and time of the creation of the note
-     */
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    //metodo che ritorna la data in un formato leggibile in stringa
-    public String getDateTimeFormatted(Context context) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"
-                , context.getResources().getConfiguration().locale);
-        formatter.setTimeZone(TimeZone.getDefault());
-        return formatter.format(new Date(mDateTime));
-    }
+
     public long getId() {
         return id;
     }
@@ -76,6 +60,10 @@ public class Note {
         this.title = title;
     }
 
+    public long getDateTime() {
+        return mDateTime;
+    }
+
     public void setDateTime(long dateTime)
     {
         mDateTime = dateTime;
@@ -87,5 +75,13 @@ public class Note {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    //metodo che ritorna la data in un formato leggibile in stringa
+    public String getDateTimeFormatted(Context context) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"
+                , context.getResources().getConfiguration().locale);
+        formatter.setTimeZone(TimeZone.getDefault());
+        return formatter.format(new Date(mDateTime));
     }
 }

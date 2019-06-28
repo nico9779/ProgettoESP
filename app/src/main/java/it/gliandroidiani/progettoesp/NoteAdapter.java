@@ -33,6 +33,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         Note currentNote = notes.get(i);
         noteViewHolder.title.setText(currentNote.getTitle());
         noteViewHolder.description.setText(currentNote.getDescription());
+        noteViewHolder.data.setText(currentNote.getDateTimeFormatted(noteViewHolder.data.getContext()));
     }
 
     //Metodo che mi restituisce il numero di note nel RecyclerView
@@ -70,10 +71,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             //Inizializzazione
             title = itemView.findViewById(R.id.note_title_item);
             description = itemView.findViewById(R.id.note_description_item);
-            data= itemView.findViewById(R.id.list_note_date);
+            data = itemView.findViewById(R.id.list_note_date);
 
-
-            data.setText(Note.getDateTimeFormatted(data.getContext()));
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

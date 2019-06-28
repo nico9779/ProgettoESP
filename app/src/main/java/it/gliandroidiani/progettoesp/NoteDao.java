@@ -17,7 +17,7 @@ Questa classe rappresenta il DAO per le note del database.
 public interface NoteDao {
 
     //Metodo per ottenere la lista delle note presenti nel database
-    @Query("SELECT * FROM note_table")
+    @Query("SELECT * FROM note_table ORDER BY date DESC")
     LiveData<List<Note>> getAllNotes();
 
     //Metodo per eliminare tutte le note nel database

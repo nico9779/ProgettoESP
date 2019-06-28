@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private AlarmViewModel alarmViewModel;
     private NoteViewModel noteViewModel;
     private boolean isConfigurationChanged;
-    private long dateInMIllis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
