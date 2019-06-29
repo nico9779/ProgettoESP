@@ -16,10 +16,12 @@ della main activity
  */
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
+    //Variabili private dell'Adapter
     private List<Note> notes = new ArrayList<>();
     private OnItemClickListener listener;
 
 
+    //Metodo che crea il viewholder e lo associa a una view
     @NonNull
     @Override
     public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -73,6 +75,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             description = itemView.findViewById(R.id.note_description_item);
             data = itemView.findViewById(R.id.list_note_date);
 
+            /*
+            Imposto un listener su un'oggetto del recyclerview in modo che ogni
+            volta che premo su una nota chiamo il metodo onItemClick passandogli come
+            parametro la nota stessa
+             */
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -84,11 +91,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         }
     }
 
+    /*Interfaccia che dichiara il metodo che viene eseguito ogni volta che premo su
+      una nota per modificarla
+     */
     public interface OnItemClickListener{
         void onItemClick(Note note);
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener){
+    //Metodo che invoca l'adapter passandogli il listener con i metodi sovrascritti
+    void setOnItemClickListener(OnItemClickListener listener){
         this.listener = listener;
     }
 }

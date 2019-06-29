@@ -75,6 +75,15 @@ public class AlarmFragment extends Fragment {
         final AlarmAdapter adapter = new AlarmAdapter();
         recyclerView.setAdapter(adapter);
 
+        /*
+        Istanzio il viewmodel e imposto sulle sveglie del database un observer.
+        In questo modo ogni volta che si verifica un cambiamento all'interno del database
+        come un'inserimento, una modifica o una rimozione viene chiamato il metodo onChanged
+        che passa all'adapter come parametro la lista delle sveglie del database aggiornata
+        e le imposta nel recyclerview.
+        Inoltre nel caso in cui non sia presente alcuna sveglia viene mostrata una textview per
+        indicare l'assenza di sveglie.
+         */
         alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
         alarmViewModel.getAllAlarms().observe(this, new Observer<List<Alarm>>() {
             @Override
@@ -90,6 +99,11 @@ public class AlarmFragment extends Fragment {
             }
         });
 
+        /*
+        Aggiungo un ItemTouchHelper che vado a connettere al recyclerview sovrascrivendo il metodo
+        onSwiped in modo tale che ogni volta che scorro una sveglia verso destra o verso sinistra
+        si apre una finestra che conferma la cancellazione di una sveglia
+         */
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
@@ -98,6 +112,7 @@ public class AlarmFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int i) {
+                //Creo la finestra per accettare la cancellazione della sveglia
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
                 builder.setTitle(getResources().getString(R.string.delete_alarm));
                 builder.setMessage(getResources().getString(R.string.message_delete_alarm));
@@ -105,6 +120,10 @@ public class AlarmFragment extends Fragment {
                 builder.setPositiveButton(getResources().getString(R.string.ok_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        /*
+                        Elimino la sveglia dal database e annullo tutti gli allarmi che erano
+                        stati istanziati
+                        */
                         Alarm alarm = adapter.getAlarmAt(viewHolder.getAdapterPosition());
                         alarmViewModel.deleteAlarm(alarm);
                         ScheduleAlarmHelper.cancelAlarm(getActivity(), alarm);
@@ -114,6 +133,11 @@ public class AlarmFragment extends Fragment {
                 builder.setNeutralButton(getResources().getString(R.string.cancel_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        /*
+                        Nel caso in cui annullo la cancellazione notifico che l'oggetto per
+                        cui avevo fatto lo swipe è stato modificato altrimenti non sarabbe
+                        più visibile nel recyclerview.
+                         */
                         adapter.notifyItemChanged(viewHolder.getAdapterPosition());
                     }
                 });
@@ -122,9 +146,18 @@ public class AlarmFragment extends Fragment {
             }
         }).attachToRecyclerView(recyclerView);
 
+        /*
+        Imposto il listener sull'adapter e sovrascrivo il metodo onItemClick dell'interfaccia
+        per modificare una sveglia. Inoltre sovrascrivo il metodo onImageClick per attivare
+        o disattivare una sveglia
+         */
         adapter.setOnItemClickListener(new AlarmAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Alarm alarm) {
+                /*
+                Creo un'intent per chiamare l'activity AddEditAlarm e passo nell'intent tutti
+                i parametri della sveglia.
+                 */
                 Intent intent = new Intent(getActivity(), ActivityAddEditAlarm.class);
                 intent.putExtra(EXTRA_ID, alarm.getId());
                 intent.putExtra(EXTRA_TITLE, alarm.getTitle());
@@ -142,6 +175,12 @@ public class AlarmFragment extends Fragment {
 
             @Override
             public void onImageClick(Alarm alarm) {
+                /*
+                Prima verifico se una sveglia è attiva oppure no e successivamente ne cambio
+                lo stato e aggiorno il database.
+                Nel caso in cui disattivo la sveglia disattivo anche tutti gli allarmi ad essa
+                associati, altrimenti li instanzio nuovamente.
+                 */
                 if(alarm.isActive()){
                     alarm.setActive(false);
                     alarmViewModel.updateAlarm(alarm);

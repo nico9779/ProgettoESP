@@ -70,6 +70,15 @@ public class NoteFragment extends Fragment {
         final NoteAdapter adapter = new NoteAdapter();
         recyclerView.setAdapter(adapter);
 
+        /*
+        Istanzio il viewmodel e imposto sulle note del database un observer.
+        In questo modo ogni volta che si verifica un cambiamento all'interno del database
+        come un'inserimento, una modifica o una rimozione viene chiamato il metodo onChanged
+        che passa all'adapter come parametro la lista delle note del database aggiornata
+        e le imposta nel recyclerview.
+        Inoltre nel caso in cui non sia presente alcuna nota viene mostrata una textview per
+        indicare l'assenza di note.
+         */
         noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
         noteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
             @Override
@@ -85,6 +94,11 @@ public class NoteFragment extends Fragment {
             }
         });
 
+        /*
+        Aggiungo un ItemTouchHelper che vado a connettere al recyclerview sovrascrivendo il metodo
+        onSwiped in modo tale che ogni volta che scorro una nota verso destra o verso sinistra
+        si apre una finestra che conferma la cancellazione di una nota
+         */
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
@@ -93,6 +107,7 @@ public class NoteFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int i) {
+                //Creo la finestra per accettare la cancellazione della nota
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
                 builder.setTitle(getResources().getString(R.string.delete_note));
                 builder.setMessage(getResources().getString(R.string.message_delete_note));
@@ -100,6 +115,7 @@ public class NoteFragment extends Fragment {
                 builder.setPositiveButton(getResources().getString(R.string.ok_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //Elimino la nota dal database
                         Note note = adapter.getNoteAt(viewHolder.getAdapterPosition());
                         noteViewModel.deleteNote(note);
                         Toast.makeText(getActivity(), R.string.event_delete_note, Toast.LENGTH_SHORT).show();
@@ -108,6 +124,12 @@ public class NoteFragment extends Fragment {
                 builder.setNeutralButton(getResources().getString(R.string.cancel_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        /*
+                        Nel caso in cui annullo la cancellazione notifico che l'oggetto per
+                        cui avevo fatto lo swipe è stato modificato altrimenti non sarabbe
+                        più visibile nel recyclerview
+                         */
+
                         adapter.notifyItemChanged(viewHolder.getAdapterPosition());
                     }
                 });
@@ -116,9 +138,17 @@ public class NoteFragment extends Fragment {
             }
         }).attachToRecyclerView(recyclerView);
 
+        /*
+        Imposto il listener sull'adapter e sovrascrivo il metodo onItemClick dell'interfaccia
+        per modificare una nota.
+         */
         adapter.setOnItemClickListener(new NoteAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Note note) {
+                /*
+                Creo un'intent per chiamare l'activity AddEditNote e passo nell'intent tutti
+                i parametri della nota
+                 */
                 Intent intent = new Intent(getActivity(), ActivityAddEditNote.class);
                 intent.putExtra(EXTRA_ID_NOTE, note.getId());
                 intent.putExtra(EXTRA_TITLE_NOTE, note.getTitle());
