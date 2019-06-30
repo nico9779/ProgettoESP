@@ -23,7 +23,7 @@ public abstract class AppDatabase extends android.arch.persistence.room.RoomData
     /*Metodo che crea un'istanza del database o che permette di ottenere l'istanza del database nel caso
     sia già stata creata
      */
-    public static synchronized AppDatabase getInstance(Context context){
+    static synchronized AppDatabase getInstance(Context context){
         if(instance == null){
             instance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "MyDatabase")
                     .fallbackToDestructiveMigration()

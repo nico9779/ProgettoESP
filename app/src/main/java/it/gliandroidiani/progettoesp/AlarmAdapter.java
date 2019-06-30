@@ -79,14 +79,14 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         if(currentAlarm.getRepetitionType().equals("Una sola volta") || currentAlarm.getRepetitionType().equals("Giornalmente"))
             viewHolder.repetition.setText(currentAlarm.getRepetitionType());
         else {
-            String item = "";
+            StringBuilder item = new StringBuilder();
             String[] repetitionOptionsDaysShort = new String[] {"Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"};
             for (int j = 0; j < currentAlarm.getRepetitionDays().length; j++) {
                 if(currentAlarm.getRepetitionDays()[j]){
-                    item = item + repetitionOptionsDaysShort[j] + " ";
+                    item.append(repetitionOptionsDaysShort[j]).append(" ");
                 }
             }
-            viewHolder.repetition.setText(item);
+            viewHolder.repetition.setText(item.toString());
         }
     }
 

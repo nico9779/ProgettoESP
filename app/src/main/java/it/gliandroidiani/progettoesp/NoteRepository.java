@@ -11,39 +11,39 @@ import java.util.List;
 Questa classe ha significato analogo a AlarmRepository
  */
 
-public class NoteRepository {
+class NoteRepository {
 
     private NoteDao noteDao;
     private LiveData<List<Note>> allNotes;
 
-    public NoteRepository(Application application){
+    NoteRepository(Application application){
         AppDatabase database = AppDatabase.getInstance(application);
         noteDao = database.noteDao();
         allNotes = noteDao.getAllNotes();
     }
 
     //Metodo che restituisce i livedata
-    public LiveData<List<Note>> getAllNotes(){
+    LiveData<List<Note>> getAllNotes(){
         return allNotes;
     }
 
     //Metodo per cancellare tutte le note nel database
-    public void deleteAllNotes() {
+    void deleteAllNotes() {
         new DeleteAllNotesAsyncTask(noteDao).execute();
     }
 
     //Metodo per aggiungere una nota
-    public void addNote(Note note){
+    void addNote(Note note){
         new AddNoteAsyncTask(noteDao).execute(note);
     }
 
     //Metodo per aggiornare una nota
-    public void updateNote(Note note){
+    void updateNote(Note note){
         new UpdateNoteAsyncTask(noteDao).execute(note);
     }
 
     //Metodo per eliminare una nota
-    public void deleteNote(Note note){
+    void deleteNote(Note note){
         new DeleteNoteAsyncTask(noteDao).execute(note);
     }
 

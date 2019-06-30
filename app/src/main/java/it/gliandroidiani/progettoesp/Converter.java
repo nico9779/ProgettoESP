@@ -8,11 +8,11 @@ repetitionDays all'interno delle istanze dell'entità sveglia trasformandolo
 in una stringa che è un formato comprensibile dal database Room
  */
 
-public class Converter {
+class Converter {
 
     //Metodo che converte l'array di booleani in stringa
     @TypeConverter
-    public boolean[] gettingArrayFromString(String string){
+    boolean[] gettingArrayFromString(String string){
         boolean[] booleanArray = new boolean[7];
         String[] array = string.split(",");
         for (int i = 0; i < array.length; i++) {
@@ -24,11 +24,11 @@ public class Converter {
 
     //Metodo che converte una stringa in array di booleani
     @TypeConverter
-    public String writingStringFromArray(boolean[] booleanArray){
-        String s = "";
+    String writingStringFromArray(boolean[] booleanArray){
+        StringBuilder s = new StringBuilder();
         for (boolean value : booleanArray) {
-            s = s + value + ",";
+            s.append(value).append(",");
         }
-        return s;
+        return s.toString();
     }
 }
