@@ -27,8 +27,8 @@ import android.widget.Toast;
 import java.util.List;
 
 
-/**
- * A simple {@link Fragment} subclass.
+/*
+Questa classe rappresenta il fragment che visualizza tutte le note ed è ospitato dalla main activity
  */
 public class NoteFragment extends Fragment {
 
@@ -185,6 +185,7 @@ public class NoteFragment extends Fragment {
                 builder.setPositiveButton(getResources().getString(R.string.ok_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //Nel caso in cui premo "OK" cancello tutte le note dal database
                         noteViewModel.deleteAllNotes();
                         Toast.makeText(getActivity(), R.string.deleted_all_notes, Toast.LENGTH_SHORT).show();
                     }

@@ -28,8 +28,8 @@ import java.util.List;
 
 
 
-/**
- * A simple {@link Fragment} subclass.
+/*
+Questa classe rappresenta il fragment che visualizza tutte le sveglie ed è ospitato dalla main activity
  */
 public class AlarmFragment extends Fragment {
 
@@ -167,6 +167,12 @@ public class AlarmFragment extends Fragment {
                 intent.putExtra(EXTRA_VIBRATION, alarm.isVibration());
                 intent.putExtra(EXTRA_ACTIVE, alarm.isActive());
                 intent.putExtra(EXTRA_REPETITION_TYPE, alarm.getRepetitionType());
+                /*
+                L'extra Repetition_days viene usato solo nel caso in cui il tipo di ripetizione
+                sia "Giorni della settimana" perchè l'array di booleani indica i giorni in cui
+                la sveglia deve squillare. Quindi nel caso in cui la ripetizione sia di tipo
+                "Una sola volta" o "Giornalmente" non mi serve.
+                 */
                 if(alarm.getRepetitionType().equals("Giorni della settimana")) {
                     intent.putExtra(EXTRA_REPETITION_DAYS, alarm.getRepetitionDays());
                 }
@@ -224,6 +230,10 @@ public class AlarmFragment extends Fragment {
                 builder.setPositiveButton(getResources().getString(R.string.ok_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        /*
+                        Nel caso in cui premo "OK" cancello tutte le sveglie dal database e
+                        disattivo gli allarmi
+                         */
                         alarmViewModel.deleteAllAlarms();
                         ScheduleAlarmHelper.cancelAllAlarm(getActivity(), alarmViewModel);
                         Toast.makeText(getActivity(), R.string.deleted_all_alarms, Toast.LENGTH_SHORT).show();

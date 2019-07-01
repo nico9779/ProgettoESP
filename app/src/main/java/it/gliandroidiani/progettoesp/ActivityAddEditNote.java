@@ -21,6 +21,10 @@ import java.util.TimeZone;
 
 import static it.gliandroidiani.progettoesp.R.id.list_note_date;
 
+/*
+Questa classe estende Activity e permette di aggiungere o modificare delle note all'interno del
+database indicando titolo della nota e descrizione.
+ */
 public class ActivityAddEditNote extends AppCompatActivity {
 
     //Variabili private della classe
@@ -129,26 +133,30 @@ public class ActivityAddEditNote extends AppCompatActivity {
         String title = noteTitle.getText().toString();
         String description = noteDescription.getText().toString();
 
-        //Controllo se l'utente ha inserito un titolo e una descrizione
+        //Controllo se l'utente ha inserito un titolo e una descrizione altrimenti lo segnalo con un Toast
         if(title.trim().isEmpty() || description.trim().isEmpty()){
             Toast.makeText(this, R.string.insert_title_and_description_note, Toast.LENGTH_SHORT).show();
             return;
         }
 
         /*
-        Controllo se devo creare l'allarme o modificarla e svolgo l'opzione corretta
+        Controllo se devo creare l'allarme o modificarla e svolgo l'opzione corretta.
+        Nel caso in cui devo modificare l'allarme l'intent che triggera l'activity contiene tra gli
+        extra quello che rappresenta l'ID della nota altrimenti nel caso in cui devo aggiungere una
+        nuova nota questo non accade.
          */
         if(!getIntent().hasExtra(NoteFragment.EXTRA_ID_NOTE)){
-            Note note = new Note(title,currentTime,description);
+            Note note = new Note(title, currentTime, description);
             noteViewModel.addNote(note);
             Toast.makeText(this, R.string.event_save_note, Toast.LENGTH_SHORT).show();
         }
         else {
             long id = getIntent().getLongExtra(NoteFragment.EXTRA_ID_NOTE, -1);
+            //Verifico se la nota è presente nel database altrimenti c'è un errore
             if (id == -1)
                 Toast.makeText(this, R.string.impossible_edit_note, Toast.LENGTH_SHORT).show();
             else {
-                Note note = new Note(title,currentTime, description);
+                Note note = new Note(title, currentTime, description);
                 note.setId(id);
                 noteViewModel.updateNote(note);
                 Toast.makeText(this, R.string.event_edit_note, Toast.LENGTH_SHORT).show();

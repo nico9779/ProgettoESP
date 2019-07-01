@@ -25,6 +25,10 @@ public class AlarmViewModel extends AndroidViewModel {
         allAlarms = repository.getAllAlarms();
     }
 
+    /*
+    Metodi del dao che vengono implementati per essere eseguiti in background recuperati
+    dal repository
+     */
     long addAlarm(Alarm alarm){
         return repository.addAlarm(alarm);
     }

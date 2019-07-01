@@ -17,6 +17,7 @@ public abstract class AppDatabase extends android.arch.persistence.room.RoomData
     //Istanza del database
     private static AppDatabase instance;
 
+    //DAO che appartengono al database
     public abstract AlarmDao alarmDao();
     public abstract NoteDao noteDao();
 

@@ -22,6 +22,10 @@ public class NoteViewModel extends AndroidViewModel {
         allNotes = repository.getAllNotes();
     }
 
+    /*
+    Metodi del dao che vengono implementati per essere eseguiti in background recuperati
+    dal repository
+     */
     void addNote(Note note){
         repository.addNote(note);
     }

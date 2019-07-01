@@ -5,7 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 /*
-Questa classe descrive l'entità allarme che appartiene al database.
+Questa classe descrive l'entità sveglia che appartiene al database.
 I parametri che descrivono una sveglia sono il suo id che viene generato automaticamente,
 il titolo, l'ora suddivisa in ore e minuti, la presenza o meno della suoneria e della vibrazione
 rappresentati da un valore booleano, il valore booleano active che descrive se la sveglia è attiva
@@ -22,12 +22,18 @@ public class Alarm {
         this.title = title;
         this.hours = hours;
         this.minute = minute;
-        this.ringtone = ringtone; //boleano per indicare se la sveglie è attiva
-        this.vibration = vibration; // sempre un booleano
+        this.ringtone = ringtone;
+        this.vibration = vibration;
         this.active = active;
         this.repetitionType = repetitionType;
+        /*
+        Nel caso in cui il tipo di ripetizione sia "Una sola volta" o "Giornalmente" inizializzo il
+        vettore repetitionDays tutto a false in quanto questo vettore serve a indicare i giorni in
+        cui la sveglia deve essere ripetuta e viene usato solo nel caso in cui il tipo di ripetizione
+        sia "Giorni della settimana"
+         */
         if(repetitionType.equals("Una sola volta") || repetitionType.equals("Giornalmente")){
-            this.repetitionDays = new boolean[] {false, false, false, false, false, false, false}; //giorni della settimana
+            this.repetitionDays = new boolean[] {false, false, false, false, false, false, false};
         }
     }
 

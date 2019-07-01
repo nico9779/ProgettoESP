@@ -18,7 +18,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent i) {
         if (i.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-            //Recupero un'istanza del repository per ottenere la lista delle sveglie  presenti nel database
+            //Recupero un'istanza del repository per ottenere la lista delle sveglie presenti nel database
             AlarmRepository alarmRepository = new AlarmRepository((Application) context.getApplicationContext());
             List<Alarm> alarms = alarmRepository.getListAlarms();
 
