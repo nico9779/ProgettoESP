@@ -10,7 +10,7 @@ import android.arch.persistence.room.Update;
 import java.util.List;
 
 /*
-Questa classe rappresenta il DAO per le note del database.
+Questa classe rappresenta il DAO (data acess object) per le note del database.
  */
 
 @Dao

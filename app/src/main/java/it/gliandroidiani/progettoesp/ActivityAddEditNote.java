@@ -119,7 +119,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
         creazione o modifica della nota
          */
         if(savedInstanceState!=null){
-            currentTime = savedInstanceState.getLong("currentTime");
+            currentTime = savedInstanceState.getLong("currentTime");//recupero  i dati salvati dopo un cambio stato
             String timeString = savedInstanceState.getString("timeString");
             if(timeString!=null) mNoteCreationTime.setText(timeString);
         }
@@ -200,7 +200,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         long time = currentTime;
         String timeString = mNoteCreationTime.getText().toString();
-        outState.putLong("currentTime", time);
+        outState.putLong("currentTime", time); //per recuperare i dati quando giro lo schermo
         outState.putString("timeString", timeString);
         super.onSaveInstanceState(outState);
     }
