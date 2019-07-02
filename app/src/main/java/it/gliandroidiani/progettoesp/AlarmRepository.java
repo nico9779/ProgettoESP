@@ -17,18 +17,18 @@ Gli altri metodi devono essere implementati in modo che vengano eseguiti in back
 la classe AsyncTask perchè Room non ammette l'esecuzioni di query nel main thread.
  */
 
-public class AlarmRepository {
+class AlarmRepository {
     private AlarmDao alarmDao;
     private LiveData<List<Alarm>> allAlarms;
 
-    public AlarmRepository(Application application){
+    AlarmRepository(Application application){
         AppDatabase database = AppDatabase.getInstance(application);
         alarmDao = database.alarmDao();
         allAlarms = alarmDao.getAllAlarms();
     }
 
     //Metodo che restituisce i livedata
-    public LiveData<List<Alarm>> getAllAlarms(){
+    LiveData<List<Alarm>> getAllAlarms(){
         return allAlarms;
     }
 
@@ -37,7 +37,7 @@ public class AlarmRepository {
     Utilizza il metodo get della classe AsyncTask opportunamente gestito in presenza di eccezioni
     che permette di recuperare i dati processati e restituiti all'interno del metodo doInBackground.
      */
-    public List<Alarm> getListAlarms() {
+    List<Alarm> getListAlarms() {
         GetListAlarmsAsyncTask asyncTask = new GetListAlarmsAsyncTask(alarmDao);
         List<Alarm> alarms = new ArrayList<>();
         try {
@@ -51,7 +51,7 @@ public class AlarmRepository {
     }
 
     //Metodo per cancellare tutte le sveglie nel database
-    public void deleteAllAlarms(){
+    void deleteAllAlarms(){
         new DeleteAllAlarmsAsyncTask(alarmDao).execute();
     }
 
@@ -59,7 +59,7 @@ public class AlarmRepository {
     Metodo che aggiunge una sveglia nel database.
     Il metodo get viene utilizzato per ottenere l'ID della sveglia appena inserita.
      */
-    public long addAlarm(Alarm alarm) {
+    long addAlarm(Alarm alarm) {
         AddAlarmAsyncTask asyncTask = new AddAlarmAsyncTask(alarmDao);
         long id_alarm = 0;
         try {
@@ -73,12 +73,12 @@ public class AlarmRepository {
     }
 
     //Metodo per aggiornare una sveglia
-    public void updateAlarm(Alarm alarm){
+    void updateAlarm(Alarm alarm){
         new UpdateAlarmAsyncTask(alarmDao).execute(alarm);
     }
 
     //Metodo per eliminare una sveglia
-    public void deleteAlarm(Alarm alarm){
+    void deleteAlarm(Alarm alarm){
         new DeleteAlarmAsyncTask(alarmDao).execute(alarm);
     }
 

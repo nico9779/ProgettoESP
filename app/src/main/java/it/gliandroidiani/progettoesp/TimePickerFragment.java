@@ -19,6 +19,10 @@ public class TimePickerFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        /*
+        Creo un calendar per determinare l'ora e i minuti attuali che vengono mostrati nel fragment
+        per impostare la sveglia
+         */
         final Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);

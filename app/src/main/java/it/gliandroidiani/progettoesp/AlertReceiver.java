@@ -8,7 +8,7 @@ import android.support.v4.app.NotificationCompat;
 
 /*
 Questa classe estende BroadcastReceiver e il metodo onReceive viene eseguito ogni volta che scatta
-un'allarme.
+un'allarme e serve a creare una notifica attraverso la classe NotificationHelper.
  */
 
 public class AlertReceiver extends BroadcastReceiver {

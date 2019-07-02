@@ -46,6 +46,10 @@
     <string name="message_delete_alarm">Sei sicuro di voler eliminare questa sveglia?</string>
     <string name="imageview_ringtone_description">Immagine che descrive se la suoneria è attiva</string>
     <string name="imageview_vibration_description">Immagine che descrive se la vibrazione è attiva</string>
+    <string name="imageview_ringtone_description_activity_add_alarm">Immagine che rappresenta l\'icona della suoneria</string>
+    <string name="imageview_vibration_description_activity_add_alarm">Immagine che rappresenta l\'icona della vibrazione</string>
+    <string name="imageview_repetition_description_activity_add_alarm">Immagine che rappresenta l\'icona della ripetizione</string>
+    <string name="imageview_arrow_description_activity_add_alarm">Immagine che rappresenta l\'icona della freccetta per il tipo di ripetizione</string>
     <string name="description_hint">Inserisci la descrizione</string>
     <string name="event_save_note">Nota salvata</string>
     <string name="event_delete_all_notes">Elimina tutte le note</string>

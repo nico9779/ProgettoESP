@@ -5,7 +5,8 @@ import android.arch.persistence.room.TypeConverter;
 /*
 Questa classe viene utilizzata dal database per memorizzare l'array di booleani
 repetitionDays all'interno delle istanze dell'entità sveglia trasformandolo
-in una stringa che è un formato comprensibile dal database Room
+in una stringa che è un formato comprensibile dal database Room in quanto Room non
+è in grado di memorizzare nel database degli array ma ha bisogno di un converter
  */
 
 public class Converter {
@@ -25,10 +26,10 @@ public class Converter {
     //Metodo che converte una stringa in array di booleani
     @TypeConverter
     public String writingStringFromArray(boolean[] booleanArray){
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for (boolean value : booleanArray) {
-            s = s + value + ",";
+            s.append(value).append(",");
         }
-        return s;
+        return s.toString();
     }
 }

@@ -25,23 +25,27 @@ public class AlarmViewModel extends AndroidViewModel {
         allAlarms = repository.getAllAlarms();
     }
 
-    public long addAlarm(Alarm alarm){
+    /*
+    Metodi del dao che vengono implementati per essere eseguiti in background recuperati
+    dal repository
+     */
+    long addAlarm(Alarm alarm){
         return repository.addAlarm(alarm);
     }
 
-    public void updateAlarm(Alarm alarm){
+    void updateAlarm(Alarm alarm){
         repository.updateAlarm(alarm);
     }
 
-    public void deleteAlarm(Alarm alarm){
+    void deleteAlarm(Alarm alarm){
         repository.deleteAlarm(alarm);
     }
 
-    public void deleteAllAlarms(){
+    void deleteAllAlarms(){
         repository.deleteAllAlarms();
     }
 
-    public LiveData<List<Alarm>> getAllAlarms(){
+    LiveData<List<Alarm>> getAllAlarms(){
         return allAlarms;
     }
 }

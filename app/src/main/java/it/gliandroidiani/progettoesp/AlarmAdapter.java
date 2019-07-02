@@ -20,9 +20,11 @@ della main activity
  */
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder> {
 
+    //Variabili private dell'Adapter
     private List<Alarm> alarms = new ArrayList<>();
     private OnItemClickListener listener;
 
+    //Metodo che crea il viewholder e lo associa a una view
     @NonNull
     @Override
     public AlarmAdapter.AlarmViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -77,14 +79,14 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         if(currentAlarm.getRepetitionType().equals("Una sola volta") || currentAlarm.getRepetitionType().equals("Giornalmente"))
             viewHolder.repetition.setText(currentAlarm.getRepetitionType());
         else {
-            String item = "";
+            StringBuilder item = new StringBuilder();
             String[] repetitionOptionsDaysShort = new String[] {"Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"};
             for (int j = 0; j < currentAlarm.getRepetitionDays().length; j++) {
                 if(currentAlarm.getRepetitionDays()[j]){
-                    item = item + repetitionOptionsDaysShort[j] + " ";
+                    item.append(repetitionOptionsDaysShort[j]).append(" ");
                 }
             }
-            viewHolder.repetition.setText(item);
+            viewHolder.repetition.setText(item.toString());
         }
     }
 
@@ -132,6 +134,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             alarmImg = itemView.findViewById(R.id.alarm_img);
             repetition = itemView.findViewById(R.id.alarm_repetition_item);
 
+            /*
+            Imposto un listener su un'oggetto del recyclerview e sulla imageview alarmImg
+            in modo che ogni volta che premo su una sveglia chiamo il metodo onItemClick e
+            il metodo onImageClick passandogli come parametro la sveglia stessa
+             */
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -152,11 +159,16 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         }
     }
 
+    /*Interfaccia che dichiara il metodo che viene eseguito ogni volta che premo su
+      una nota per modificarla e il metodo che viene eseguito quando premo sulla imageview
+      per disattivare o riattivare la sveglia
+     */
     public interface OnItemClickListener{
         void onItemClick(Alarm alarm);
         void onImageClick(Alarm alarm);
     }
 
+    //Metodo che invoca l'adapter passandogli il listener con i metodi sovrascritti
     void setOnItemClickListener(OnItemClickListener listener){
         this.listener = listener;
     }

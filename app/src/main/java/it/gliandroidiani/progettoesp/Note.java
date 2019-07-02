@@ -13,7 +13,7 @@ import java.util.TimeZone;
 /*
 Questa classe descrive l'entità nota che appartiene al database.
 I parametri che descrivono una nota sono il suo id che viene generato automaticamente,
-il titolo e la descrizione e il giorno e l'ora on cui è stata presa
+il titolo, la descrizione e il giorno e l'ora in cui è stata creata.
  */
 
 @Entity(tableName = "note_table")
@@ -77,7 +77,7 @@ public class Note {
         this.description = description;
     }
 
-    //metodo che ritorna la data in un formato leggibile in stringa
+    //Metodo che ritorna la data in un formato leggibile in stringa
     public String getDateTimeFormatted(Context context) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"
                 , context.getResources().getConfiguration().locale);

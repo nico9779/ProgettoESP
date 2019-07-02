@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 /*
 Questa classe è la classe principale che ospita i due fragment "AlarmFragment" e "NoteFragment"
-che consentono di visualizzare le sveglie e gli allarmi
+che consentono di visualizzare le sveglie e le note
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -134,14 +134,14 @@ public class MainActivity extends AppCompatActivity {
                     int hours = intent.getIntExtra(AlarmClock.EXTRA_HOUR, -1);
                     int minute = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, -1);
 
-                    String title = "Sveglia"; //titolo di dafault se non dovess essere impostato dall'utente
+                    String title = "Sveglia"; //titolo di default se non dovesse essere impostato dall'utente
 
 
                     if(intent.hasExtra(AlarmClock.EXTRA_MESSAGE)){
                         title = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE);
                     }
 
-                    String repetitionType = "Una sola volta";//ripetizione di Default
+                    String repetitionType = "Una sola volta"; //ripetizione di default
                     boolean[] repetitionDays = new boolean[7];
 
                     /*
@@ -185,12 +185,16 @@ public class MainActivity extends AppCompatActivity {
     private void addNoteAssistant(Intent intent){
         String action = intent.getAction();
         if(!isConfigurationChanged) {
+            // verifico se l'intent che ricevo è triggerato dall'assistent per impostare una nota
             if (NoteIntents.ACTION_CREATE_NOTE.equals(action)) {
+                // verifico se ci sono gli extra che mi servono per impostare la nota
                 if(intent.hasExtra(Intent.EXTRA_TEXT)){
                     String title = "Nota";
                     String description = intent.getStringExtra(Intent.EXTRA_TEXT);
+                    //Creo la nuova nota e la aggiungo nel database
                     Note note = new Note(title, System.currentTimeMillis(), description);
                     noteViewModel.addNote(note);
+                    //Visualizzo le note nella main activity
                     navigationView.setSelectedItemId(R.id.note);
                     Toast.makeText(this, R.string.event_save_note, Toast.LENGTH_SHORT).show();
                 }

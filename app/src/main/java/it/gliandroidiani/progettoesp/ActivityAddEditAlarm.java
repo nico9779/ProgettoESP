@@ -168,13 +168,13 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             else {
                 boolean[] repetitionDays = intent.getBooleanArrayExtra(AlarmFragment.EXTRA_REPETITION_DAYS);
                 repetitionOptionsDaysChecked = repetitionDays;
-                String item = "";
+                StringBuilder item = new StringBuilder();
                 for (int i = 0; i < repetitionDays.length; i++) {
                     if(repetitionDays[i]){
-                        item = item + repetitionOptionsDaysShort[i] + " ";
+                        item.append(repetitionOptionsDaysShort[i]).append(" ");
                     }
                 }
-                repetition_picked.setText(item);
+                repetition_picked.setText(item.toString());
             }
         }
 
@@ -227,19 +227,19 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     boolean isFalse = false;
-                                    String item = "";
+                                    StringBuilder item = new StringBuilder();
                                     for (int i = 0; i < repetitionOptionsDaysChecked.length; i++) {
                                         if(repetitionOptionsDaysChecked[i]){
-                                            item = item + repetitionOptionsDaysShort[i] + " ";
+                                            item.append(repetitionOptionsDaysShort[i]).append(" ");
                                         }
                                         else {
                                             isFalse = true;
                                         }
                                     }
-                                    if(isFalse && !item.isEmpty()) {
-                                        repetition_picked.setText(item);
+                                    if(isFalse && (item.length() > 0)) {
+                                        repetition_picked.setText(item.toString());
                                     }
-                                    else if(item.isEmpty()){
+                                    else if(item.length() == 0){
                                         repetition_picked.setText(R.string.no_repetition_option_selected);
                                     }
                                     else {

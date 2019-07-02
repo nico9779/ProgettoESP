@@ -14,7 +14,7 @@ gli allarmi in base al tempo selezionato nel momento della creazione della svegl
 e al tipo di ripetizione scelto
  */
 
-public class ScheduleAlarmHelper {
+class ScheduleAlarmHelper {
 
 
     /*
@@ -31,7 +31,7 @@ public class ScheduleAlarmHelper {
     Nei casi in cui la ripetizione sia del tipo "Una sola volta" o "Giornalmente" i pendingintent usati
     saranno solamente uno.
      */
-    public static void scheduleAlarm(Context context, long alarmID, Alarm alarm){
+    static void scheduleAlarm(Context context, long alarmID, Alarm alarm){
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlertReceiver.class);
         intent.putExtra("Title", alarm.getTitle());
@@ -93,7 +93,7 @@ public class ScheduleAlarmHelper {
 
 
     //Metodo per cancellare gli allarmi associati a una data sveglia
-    public static void cancelAlarm(Context context, Alarm alarm) {
+    static void cancelAlarm(Context context, Alarm alarm) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlertReceiver.class);
 
@@ -112,7 +112,7 @@ public class ScheduleAlarmHelper {
     }
 
     //Metodo per cancellare tutti gli allarmi associati a tutte le sveglie presenti nel database
-    public static void cancelAllAlarm(Context context, AlarmViewModel alarmViewModel) {
+    static void cancelAllAlarm(Context context, AlarmViewModel alarmViewModel) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlertReceiver.class);
         List<Alarm> alarms = alarmViewModel.getAllAlarms().getValue();

@@ -35,6 +35,10 @@ public class NotificationHelper extends ContextWrapper {
 
     public NotificationHelper(Context base) {
         super(base);
+        /*
+        Nel caso in cui l'API level del dispositivo sia maggiore di 26 per creare le notifiche
+        devo usare i canali
+         */
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannels();
         }
@@ -44,6 +48,9 @@ public class NotificationHelper extends ContextWrapper {
     @TargetApi(Build.VERSION_CODES.O)
     public void createChannels() {
         NotificationChannel channelRingtone = new NotificationChannel(CHANNEL_ID_RINGTONE, CHANNEL_NAME_RINGTONE, NotificationManager.IMPORTANCE_HIGH);
+        /*
+        Nel canale "progettoesp_RINGTONE" imposto la suoneria che è la risorsa R.raw.alarmclocksound
+         */
         Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.alarmclocksound);
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -59,6 +66,7 @@ public class NotificationHelper extends ContextWrapper {
         getManager().createNotificationChannel(channelNoRingtone);
     }
 
+    //Creo un'istanza del notification manager per creare i canali nel caso in cui non esista o restituisco quella già esistente
     public NotificationManager getManager(){
         if(mManager == null){
             mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
