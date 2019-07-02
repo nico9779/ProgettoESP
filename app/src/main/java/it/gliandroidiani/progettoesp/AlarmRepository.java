@@ -82,6 +82,11 @@ class AlarmRepository {
         new DeleteAlarmAsyncTask(alarmDao).execute(alarm);
     }
 
+    //Metodo per eliminare una sveglia con un dato titolo
+    void deleteAlarmName(String name){
+        new DeleteAlarmNameAsyncTask(alarmDao).execute(name);
+    }
+
     /*
     Qui di seguito sono riportate tutte le classi che estendono AsyncTask e eseguono le query
     del dao in background.
@@ -156,6 +161,21 @@ class AlarmRepository {
         @Override
         protected Void doInBackground(Alarm... alarms) {
             alarmDao.deleteAlarm(alarms[0]);
+            return null;
+        }
+    }
+
+    private static class DeleteAlarmNameAsyncTask extends AsyncTask<String, Void, Void>{
+
+        private AlarmDao alarmDao;
+
+        private DeleteAlarmNameAsyncTask(AlarmDao alarmDao){
+            this.alarmDao = alarmDao;
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            alarmDao.deleteAlarmName(strings[0]);
             return null;
         }
     }

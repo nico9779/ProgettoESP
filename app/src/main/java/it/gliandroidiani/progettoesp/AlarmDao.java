@@ -32,6 +32,10 @@ public interface AlarmDao {
     @Query("DELETE FROM alarm_table")
     void deleteAllAlarms();
 
+    //Metodo che cancella tutte le sveglie con un determinato titolo
+    @Query("DELETE FROM alarm_table WHERE title = :alarmName")
+    void deleteAlarmName(String alarmName);
+
     /*Inserimento sveglia
       Restituisce un long ovvero l'ID della sveglia inserita.
      */

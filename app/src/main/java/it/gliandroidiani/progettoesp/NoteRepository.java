@@ -5,7 +5,9 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /*
 Questa classe ha significato analogo a AlarmRepository
@@ -45,6 +47,29 @@ class NoteRepository {
     //Metodo per eliminare una nota
     void deleteNote(Note note){
         new DeleteNoteAsyncTask(noteDao).execute(note);
+    }
+
+    //Metodo per eliminare una nota con un dato titolo
+    void deleteNoteName(String name){
+        new DeleteNoteNameAsyncTask(noteDao).execute(name);
+    }
+
+    /*
+    Metodo che restituisce direttamente la lista delle note anzichè i livedata.
+    Utilizza il metodo get della classe AsyncTask opportunamente gestito in presenza di eccezioni
+    che permette di recuperare i dati processati e restituiti all'interno del metodo doInBackground.
+     */
+    List<Note> getListNotes() {
+        GetListNotesAsyncTask asyncTask = new GetListNotesAsyncTask(noteDao);
+        List<Note> notes = new ArrayList<>();
+        try {
+            notes = asyncTask.execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return notes;
     }
 
     /*
@@ -109,6 +134,35 @@ class NoteRepository {
         protected Void doInBackground(Note... notes) {
             noteDao.deleteNote(notes[0]);
             return null;
+        }
+    }
+
+    private static class DeleteNoteNameAsyncTask extends AsyncTask<String, Void, Void>{
+
+        private NoteDao noteDao;
+
+        private DeleteNoteNameAsyncTask(NoteDao noteDao){
+            this.noteDao = noteDao;
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            noteDao.deleteNoteName(strings[0]);
+            return null;
+        }
+    }
+
+    private static class GetListNotesAsyncTask extends AsyncTask<Void, Void, List<Note>>{
+
+        private NoteDao noteDao;
+
+        private GetListNotesAsyncTask(NoteDao noteDao){
+            this.noteDao = noteDao;
+        }
+
+        @Override
+        protected List<Note> doInBackground(Void... voids) {
+            return noteDao.getListNotes();
         }
     }
 }

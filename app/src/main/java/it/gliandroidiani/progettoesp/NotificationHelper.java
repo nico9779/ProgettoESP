@@ -99,7 +99,7 @@ public class NotificationHelper extends ContextWrapper {
         }
         builder.setContentTitle(title)
                 .setContentText("Sveglia!!!")
-                .setSmallIcon(R.drawable.ic_alarm_black_24dp)
+                .setSmallIcon(R.drawable.ic_icon_notification)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent);
         /*

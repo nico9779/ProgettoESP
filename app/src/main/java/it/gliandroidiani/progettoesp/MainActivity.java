@@ -1,6 +1,5 @@
 package it.gliandroidiani.progettoesp;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.provider.AlarmClock;
 import android.support.annotation.NonNull;
@@ -17,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.actions.NoteIntents;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /*
 Questa classe è la classe principale che ospita i due fragment "AlarmFragment" e "NoteFragment"
@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     //Variabili private
     private BottomNavigationView navigationView;
-    private AlarmViewModel alarmViewModel;
-    private NoteViewModel noteViewModel;
+    private AlarmRepository alarmRepository;
+    private NoteRepository noteRepository;
     private boolean isConfigurationChanged;
 
     @Override
@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Inizializzazione
         navigationView = findViewById(R.id.bottom_navigation_bar);
-        alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
-        noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
+        alarmRepository = new AlarmRepository(getApplication());
+        noteRepository = new NoteRepository(getApplication());
         isConfigurationChanged = false;
 
         //Istanzio i fragment
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                     if(repetitionType.equals("Giorni della settimana")) {
                         alarm.setRepetitionDays(repetitionDays);
                     }
-                    long alarmID = alarmViewModel.addAlarm(alarm);
+                    long alarmID = alarmRepository.addAlarm(alarm);
                     ScheduleAlarmHelper.scheduleAlarm(this, alarmID, alarm);
                     Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
                 }
@@ -189,14 +189,77 @@ public class MainActivity extends AppCompatActivity {
             if (NoteIntents.ACTION_CREATE_NOTE.equals(action)) {
                 // verifico se ci sono gli extra che mi servono per impostare la nota
                 if(intent.hasExtra(Intent.EXTRA_TEXT)){
-                    String title = "Nota";
-                    String description = intent.getStringExtra(Intent.EXTRA_TEXT);
-                    //Creo la nuova nota e la aggiungo nel database
-                    Note note = new Note(title, System.currentTimeMillis(), description);
-                    noteViewModel.addNote(note);
-                    //Visualizzo le note nella main activity
-                    navigationView.setSelectedItemId(R.id.note);
-                    Toast.makeText(this, R.string.event_save_note, Toast.LENGTH_SHORT).show();
+                    // recupero il testo della nota dagli extra dell'intent
+                    String testoNota = intent.getStringExtra(Intent.EXTRA_TEXT);
+                    /*
+                    Nel caso in cui voglio cancellare delle sveglie con un determinato titolo estraggo
+                    tale titolo dal testo della nota
+                     */
+                    if(testoNota.toLowerCase().contains("cancella sveglie con titolo")){
+                        String title = testoNota.split(" ")[4];
+                        //Booleano che verifica se ci sono sveglie presenti nel database con quel dato titolo
+                        boolean noAlarms = true;
+                        //Recupero la lista delle sveglie dal database
+                        List<Alarm> alarms = alarmRepository.getListAlarms();
+                        for (Alarm alarm : alarms) {
+                            // Se c'è una sveglia nel database con quel titolo disattivo gli allarmi ad essa associati
+                            if (alarm.getTitle().equals(title)) {
+                                noAlarms = false;
+                                ScheduleAlarmHelper.cancelAlarm(this, alarm);
+                            }
+                        }
+                        /*
+                        Se non esiste nessun allarme con quel titolo lo notifico con un toast
+                        altrimenti elimino le sveglie con quel determinato titolo
+                         */
+                        if(noAlarms)
+                            Toast.makeText(this, "Nessuna sveglia "+title+" da cancellare", Toast.LENGTH_SHORT).show();
+                        else {
+                            alarmRepository.deleteAlarmName(title);
+                            Toast.makeText(this, "Sveglie con titolo " + title + " cancellate", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    /*
+                    Nel caso in cui voglio cancellare delle note con un determinato titolo estraggo
+                    tale titolo dal testo della nota
+                     */
+                    else if(testoNota.toLowerCase().contains("cancella note con titolo")){
+                        String title = testoNota.split(" ")[4];
+                        //Booleano che verifica se ci sono note presenti nel database con quel dato titolo
+                        boolean noNotes = true;
+                        //Recupero la lista delle note dal database
+                        List<Note> notes = noteRepository.getListNotes();
+                        for(Note note: notes){
+                            //Verifico se esistono note con quel dato titolo
+                            if(note.getTitle().equals(title)){
+                                noNotes = false;
+                            }
+                        }
+                        navigationView.setSelectedItemId(R.id.note);
+                        /*
+                        Se non esiste nessuna nota con quel titolo lo notifico con un toast
+                        altrimenti elimino le note con quel determinato titolo
+                         */
+                        if(noNotes)
+                            Toast.makeText(this, "Nessuna nota " + title + " da cancellare", Toast.LENGTH_SHORT).show();
+                        else {
+                            noteRepository.deleteNoteName(title);
+                            Toast.makeText(this, "Note con titolo " + title + " cancellate", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    /*
+                    In tutti gli altri caso aggiungo una nuova nota nel database che hanno come
+                    descrizione il testo della nota
+                     */
+                    else {
+                        String title = "Nota";  //Titolo di default
+                        //Creo la nuova nota e la aggiungo nel database
+                        Note note = new Note(title, System.currentTimeMillis(), testoNota);
+                        noteRepository.addNote(note);
+                        //Visualizzo le note nella main activity
+                        navigationView.setSelectedItemId(R.id.note);
+                        Toast.makeText(this, R.string.event_save_note, Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else {
                     Toast.makeText(this, R.string.impossible_add_note, Toast.LENGTH_SHORT).show();

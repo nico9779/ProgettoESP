@@ -1,6 +1,5 @@
 package it.gliandroidiani.progettoesp;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
@@ -31,7 +30,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
     private EditText noteTitle;
     private EditText noteDescription;
     private Toolbar noteToolbar;
-    private NoteViewModel noteViewModel;
+    private NoteRepository noteRepository;
     private TextView mNoteCreationTime;
     private long currentTime;
 
@@ -45,7 +44,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
         noteDescription = findViewById(R.id.note_description);
         mNoteCreationTime = findViewById(list_note_date);
         noteToolbar = findViewById(R.id.add_note_toolbar);
-        noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
+        noteRepository = new NoteRepository(getApplication());
         currentTime = System.currentTimeMillis();
 
         /*
@@ -147,7 +146,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
          */
         if(!getIntent().hasExtra(NoteFragment.EXTRA_ID_NOTE)){
             Note note = new Note(title, currentTime, description);
-            noteViewModel.addNote(note);
+            noteRepository.addNote(note);
             Toast.makeText(this, R.string.event_save_note, Toast.LENGTH_SHORT).show();
         }
         else {
@@ -158,7 +157,7 @@ public class ActivityAddEditNote extends AppCompatActivity {
             else {
                 Note note = new Note(title, currentTime, description);
                 note.setId(id);
-                noteViewModel.updateNote(note);
+                noteRepository.updateNote(note);
                 Toast.makeText(this, R.string.event_edit_note, Toast.LENGTH_SHORT).show();
             }
         }

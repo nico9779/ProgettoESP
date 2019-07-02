@@ -1,7 +1,6 @@
 package it.gliandroidiani.progettoesp;
 
 import android.app.TimePickerDialog;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
@@ -33,7 +32,7 @@ database indicando titolo della sveglia, ora, tipo della ripetizione ("Una sola 
 public class ActivityAddEditAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener{
 
     //Variabili private della classe
-    private AlarmViewModel alarmViewModel;
+    private AlarmRepository alarmRepository;
     private Toolbar alarmToolbar;
     private TextView time_picked;
     private TextView ringtone_state;
@@ -67,7 +66,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
         repetitionOptionsDaysShort = getResources().getStringArray(R.array.repetition_options_days_short);
         repetitionOptionsDaysChecked = new boolean[repetitionOptionsDays.length];
 
-        alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
+        alarmRepository = new AlarmRepository(getApplication());
 
         alarmToolbar = findViewById(R.id.add_alarm_toolbar);
 
@@ -322,7 +321,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
             if(repetition.equals("Giorni della settimana")){
                 alarm.setRepetitionDays(repetitionOptionsDaysChecked);
             }
-            long alarmID = alarmViewModel.addAlarm(alarm);
+            long alarmID = alarmRepository.addAlarm(alarm);
             ScheduleAlarmHelper.scheduleAlarm(this, alarmID, alarm);
             Toast.makeText(this, R.string.event_save_alarm, Toast.LENGTH_SHORT).show();
         }
@@ -337,7 +336,7 @@ public class ActivityAddEditAlarm extends AppCompatActivity implements TimePicke
                 if(repetition.equals("Giorni della settimana")) {
                     alarm.setRepetitionDays(repetitionOptionsDaysChecked);
                 }
-                alarmViewModel.updateAlarm(alarm);
+                alarmRepository.updateAlarm(alarm);
                 if(active) {
                     ScheduleAlarmHelper.scheduleAlarm(this, id, alarm);
                 }
