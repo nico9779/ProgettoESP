@@ -192,11 +192,47 @@ public class MainActivity extends AppCompatActivity {
                     // recupero il testo della nota dagli extra dell'intent
                     String testoNota = intent.getStringExtra(Intent.EXTRA_TEXT);
                     /*
+                    If che eseguo nel caso in cui voglio cancellare tutte le sveglie
+                     */
+                    if(testoNota.toLowerCase().equals("cancella tutte le sveglie")){
+                        //Recupero la lista delle sveglie dal database
+                        List<Alarm> alarms = alarmRepository.getListAlarms();
+                        //Se ci sono sveglie nel database le elimino tutte
+                        if(!alarms.isEmpty()) {
+                            alarmRepository.deleteAllAlarms();
+                            for (Alarm alarm : alarms) {
+                                //Disattivo tutti gli allarmi
+                                ScheduleAlarmHelper.cancelAlarm(this, alarm);
+                            }
+                        Toast.makeText(this, R.string.deleted_all_alarms, Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(this, R.string.no_alarms_to_delete, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    /*
+                    If che eseguo nel caso in cui voglio cancellare tutte le note
+                     */
+                    else if(testoNota.toLowerCase().equals("cancella tutte le note")){
+                        //Recupero la lista delle note dal database
+                        List<Note> notes = noteRepository.getListNotes();
+                        navigationView.setSelectedItemId(R.id.note);
+                        //Se ci sono note nel database le elimino tutte
+                        if(!notes.isEmpty()) {
+                            noteRepository.deleteAllNotes();
+                            Toast.makeText(this, R.string.deleted_all_notes, Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(this, R.string.no_notes_to_delete, Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                    /*
                     Nel caso in cui voglio cancellare delle sveglie con un determinato titolo estraggo
                     tale titolo dal testo della nota
                      */
-                    if(testoNota.toLowerCase().contains("cancella sveglie con titolo")){
-                        String title = testoNota.split(" ")[4];
+                    else if(testoNota.toLowerCase().startsWith("cancella sveglie con titolo")){
+                        String title = testoNota.split(" ")[4].substring(0,1).toUpperCase()+testoNota.split(" ")[4].substring(1);
                         //Booleano che verifica se ci sono sveglie presenti nel database con quel dato titolo
                         boolean noAlarms = true;
                         //Recupero la lista delle sveglie dal database
@@ -223,8 +259,8 @@ public class MainActivity extends AppCompatActivity {
                     Nel caso in cui voglio cancellare delle note con un determinato titolo estraggo
                     tale titolo dal testo della nota
                      */
-                    else if(testoNota.toLowerCase().contains("cancella note con titolo")){
-                        String title = testoNota.split(" ")[4];
+                    else if(testoNota.toLowerCase().startsWith("cancella note con titolo")){
+                        String title = testoNota.split(" ")[4].substring(0,1).toUpperCase()+testoNota.split(" ")[4].substring(1);
                         //Booleano che verifica se ci sono note presenti nel database con quel dato titolo
                         boolean noNotes = true;
                         //Recupero la lista delle note dal database
@@ -248,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     /*
-                    In tutti gli altri caso aggiungo una nuova nota nel database che hanno come
+                    In tutti gli altri casi aggiungo una nuova nota nel database che ha come
                     descrizione il testo della nota
                      */
                     else {

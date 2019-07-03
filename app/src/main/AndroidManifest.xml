@@ -18,8 +18,7 @@
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".ActivityAddEditAlarm"
             android:parentActivityName=".MainActivity"/>
-        <activity android:name=".MainActivity"
-            android:launchMode="singleTop">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
