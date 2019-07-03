@@ -190,11 +190,11 @@ public class MainActivity extends AppCompatActivity {
                 // verifico se ci sono gli extra che mi servono per impostare la nota
                 if(intent.hasExtra(Intent.EXTRA_TEXT)){
                     // recupero il testo della nota dagli extra dell'intent
-                    String testoNota = intent.getStringExtra(Intent.EXTRA_TEXT);
+                    String testoNota = intent.getStringExtra(Intent.EXTRA_TEXT).toLowerCase();
                     /*
                     If che eseguo nel caso in cui voglio cancellare tutte le sveglie
                      */
-                    if(testoNota.toLowerCase().equals("cancella tutte le sveglie")){
+                    if(testoNota.equals("cancella tutte le sveglie")){
                         //Recupero la lista delle sveglie dal database
                         List<Alarm> alarms = alarmRepository.getListAlarms();
                         //Se ci sono sveglie nel database le elimino tutte
@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
                     /*
                     If che eseguo nel caso in cui voglio cancellare tutte le note
                      */
-                    else if(testoNota.toLowerCase().equals("cancella tutte le note")){
+                    else if(testoNota.equals("cancella tutte le note")){
                         //Recupero la lista delle note dal database
                         List<Note> notes = noteRepository.getListNotes();
                         navigationView.setSelectedItemId(R.id.note);
@@ -231,8 +231,8 @@ public class MainActivity extends AppCompatActivity {
                     Nel caso in cui voglio cancellare delle sveglie con un determinato titolo estraggo
                     tale titolo dal testo della nota
                      */
-                    else if(testoNota.toLowerCase().startsWith("cancella sveglie con titolo")){
-                        String title = testoNota.split(" ")[4].substring(0,1).toUpperCase()+testoNota.split(" ")[4].substring(1);
+                    else if(testoNota.startsWith("cancella sveglie con titolo") && !testoNota.trim().equals("cancella sveglie con titolo")){
+                        String title = testoNota.substring(28,29).toUpperCase()+testoNota.substring(29);
                         //Booleano che verifica se ci sono sveglie presenti nel database con quel dato titolo
                         boolean noAlarms = true;
                         //Recupero la lista delle sveglie dal database
@@ -259,8 +259,8 @@ public class MainActivity extends AppCompatActivity {
                     Nel caso in cui voglio cancellare delle note con un determinato titolo estraggo
                     tale titolo dal testo della nota
                      */
-                    else if(testoNota.toLowerCase().startsWith("cancella note con titolo")){
-                        String title = testoNota.split(" ")[4].substring(0,1).toUpperCase()+testoNota.split(" ")[4].substring(1);
+                    else if(testoNota.startsWith("cancella note con titolo") && !testoNota.trim().equals("cancella note con titolo")){
+                        String title = testoNota.substring(25,26).toUpperCase()+testoNota.substring(26);
                         //Booleano che verifica se ci sono note presenti nel database con quel dato titolo
                         boolean noNotes = true;
                         //Recupero la lista delle note dal database
